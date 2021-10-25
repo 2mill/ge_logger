@@ -1,5 +1,7 @@
 
 import argparse, requests, json 
+from tools import wiki_ge
+from structs import Item
 from os.path import exists
 MAPPING_URL = "https://prices.runescape.wiki/api/v1/osrs/mapping"
 # first we will just be taking an id argument, and outputting the id's information high and low prices for the day.
@@ -10,33 +12,11 @@ parser.add_argument('--lookup', type=str, required=False, help="Looks up an item
 args = parser.parse_args();
 
 
-
-
-
-if args.lookup is not None and args.lookup.isnumeric():
-	args.lookup = int(args.lookup)
-# id_url = f"https://prices.runescape.wiki/api/v1/osrs/latest?id={args.id}"
-id_url = lambda id: f"https://prices.runescape.wiki/api/v1/osrs/latest?id={id}"
-header = {
-	'User-Agent': 'My personal ge price tracker',
-	'From': 'yannick.dorn@gmail.com'
-}
-class Item:
-	def __init__(self, name, id):
-		self.name = name
-		self.id = id
-		item_data = requests.get(id_url(id), headers=header).json()
-		self.high = item_data['data'][f'{id}']['high']
-		self.low = item_data['data'][f'{id}']['low']
-
-	def __str__(self) -> str:
-
-item_map = requests.get(f"https://prices.runescape.wiki/api/v1/osrs/mapping", headers=header)
-item_map = item_map.json()
+wiki_ge = wiki_ge("./config.json")
 # If already exists, then don't download more data unless the argument has been made for more data.
 if not exists("./item_data.json") or args.update:
 	with open('item_data.json', 'w') as outfile:
-		json.dump(requests.get(f"https://prices.runescape.wiki/api/v1/osrs/mapping").json(), outfile)
+		json.dump(requests.get(wiki_ge.mapping_link).json(), outfile)
 
 
 file_data = None
