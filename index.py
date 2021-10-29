@@ -3,13 +3,20 @@ import argparse, requests, json
 from tools import wiki_ge
 from structs import Item
 from os.path import exists
-MAPPING_URL = "https://prices.runescape.wiki/api/v1/osrs/mapping"
 # first we will just be taking an id argument, and outputting the id's information high and low prices for the day.
 
 parser = argparse.ArgumentParser(prog="ge_track", description="Used for checking the item low and high price for a certain ID")
 parser.add_argument('--update', action="store_true", required=False, help="Updates the list for new item information")
 parser.add_argument('--lookup', type=str, required=False, help="Looks up an item given an ID number or item name")
+parser.add_argument('--init', action="store_true", required=False, help="Initialize the configuration fil")
+parser.add_argument('--track', type=str, required=False, help="Start tracking an item, latest price data if not given.")
+parser.add_argument('--price', type=int, required=False, help="The price of the tracked item.")
 args = parser.parse_args();
+
+
+if not exists("./ge_tracker.json"):
+	with open('./ge_tracker.json', 'w') as f:
+		f.close()
 
 
 wiki_ge = wiki_ge("./config.json")

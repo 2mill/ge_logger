@@ -1,4 +1,5 @@
 config.json
+ge_tracker.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
