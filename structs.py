@@ -1,8 +1,7 @@
-import requests
 class Item:
-	def __init__(self, id):
+	def __init__(self, id:int, name:str, info:object):
 		self.id = id
-		item_data = requests.get(id_url(id), headers=header).json()
+		self.info = info
 		self.high = item_data['data'][f'{id}']['high']
 		self.low = item_data['data'][f'{id}']['low']
 	def __str__(self) -> str:

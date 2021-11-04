@@ -1,6 +1,6 @@
 
 import argparse, requests, json 
-from tools import wiki_ge
+from tools import WikiGe, id_map
 from structs import Item
 from os.path import exists
 # first we will just be taking an id argument, and outputting the id's information high and low prices for the day.
@@ -14,21 +14,20 @@ parser.add_argument('--price', type=int, required=False, help="The price of the 
 args = parser.parse_args();
 
 
+
+temp = id_map()
+print(list(temp))
 if not exists("./ge_tracker.json"):
 	with open('./ge_tracker.json', 'w') as f:
 		f.close()
 
 
-wiki_ge = wiki_ge("./config.json")
+wiki_ge = WikiGe("./config.json")
 # If already exists, then don't download more data unless the argument has been made for more data.
 if not exists("./item_data.json") or args.update:
 	with open('item_data.json', 'w') as outfile:
-		json.dump(requests.get(wiki_ge.mapping_link).json(), outfile)
-
-
+		json.dump(wiki_ge.get_mapping(), outfile)
 file_data = None
-
-
 #If args.lookup is set, then lookup price information for the item.
 if args.lookup is not None:
 	with open('./item_data.json', 'r') as data:
