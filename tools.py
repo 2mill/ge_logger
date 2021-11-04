@@ -5,27 +5,27 @@ from structs import Item
 
 
 
-config: str = lambda location: json.load(open(f"./{location}", 'r'))
-id_link = lambda id: f"https://prices.runescape.wiki/api/osrs/latest?id={id}"
-mapping_link = r"https://prices.runescape.wiki/api/v1/osrs/mapping"
-def id_map() -> map:
-	file_data = None
-	with open("./item_data.json", 'r') as data:
-		file_data = json.load(data)
-	ids = []
-	names = []
-	for item in file_data:
-		ids.append(item['id'])
-		names.append(item['name'])
-	id_map = map(lambda id, name: name, ids, names)
-	return id_map
+json_load: str = lambda location: json.load(open(f"./{location}", 'r'))
+api_link = r"https://prices.runescape.wiki/api/v1/osrs/"
+mapping_link = f"{api_link}mapping"
+id_link = lambda id: f"{api_link}latest?id={id}"
+
+
+
+def id_dict(filename: str) -> dict:
+	item_data: json = json_load(f"./{filename}")
+	item_dictionary: dict = {}
+	for item in item_data:
+		item_dictionary[item['id']] = item['name']
+	return item_dictionary
 class WikiGe:
 	def __init__(self, config_filepath) -> None:
-		header_config = config(config_filepath)
+		header_config = json_load(config_filepath)
 		self.header = {
 			'User-agent': header_config['user-agent'],
 			'From': header_config['email']
 		}
+		self.id_dict = id_dict("item_data.json")
 	def get_id(self, id: int, timeseries: str) -> object:
 		link = id_link(id)
 		info = requests.get(link, self.header).json()

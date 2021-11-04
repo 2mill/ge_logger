@@ -1,6 +1,7 @@
 
 import argparse, requests, json 
-from tools import WikiGe, id_map
+import tools
+from tools import WikiGe
 from structs import Item
 from os.path import exists
 # first we will just be taking an id argument, and outputting the id's information high and low prices for the day.
@@ -15,8 +16,6 @@ args = parser.parse_args();
 
 
 
-temp = id_map()
-print(list(temp))
 if not exists("./ge_tracker.json"):
 	with open('./ge_tracker.json', 'w') as f:
 		f.close()
