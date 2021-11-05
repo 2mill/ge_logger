@@ -1,5 +1,4 @@
-import json, requests
-from structs import Item
+import json 
 
 
 
@@ -18,21 +17,6 @@ def id_dict(filename: str) -> dict:
 	for item in item_data:
 		item_dictionary[item['id']] = item['name']
 	return item_dictionary
-class WikiGe:
-	def __init__(self, config_filepath) -> None:
-		header_config = json_load(config_filepath)
-		self.header = {
-			'User-agent': header_config['user-agent'],
-			'From': header_config['email']
-		}
-		self.id_dict = id_dict("item_data.json")
-	def get_id(self, id: int, timeseries: str) -> object:
-		link = id_link(id)
-		info = requests.get(link, self.header).json()
-	def get_mapping(self) -> object:
-		request = requests.get(mapping_link, headers=self.header)
-		if (request.status_code == 404): print("Got a 404")
-		return request.json()
 
 def wiki_ge(config_filepath: str) -> object: 
 	header_config = config(config_filepath)
