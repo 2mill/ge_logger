@@ -15,18 +15,17 @@ parser.add_argument('--price', type=int, required=False, help="The price of the 
 args = parser.parse_args();
 
 
-wiki_ge = WikiGe("./config.json")
-
-if not exists("./ge_tracker.json"):
-	with open('./ge_tracker.json', 'w') as f:
-		f.close()
-
-
-# If already exists, then don't download more data unless the argument has been made for more data.
 if not exists("./item_data.json") or args.update:
-	with open('item_data.json', 'w') as outfile:
-		json.dump(wiki_ge.get_mapping(), outfile)
+	with open('./item_data.json', 'w') as f:
+		json.dump(requests.get(
+			tools.mapping_link,
+			headers=tools.json_load("config.json")
+		).json(), f)
+		f.close()
+wiki_ge = WikiGe("config.json")
+
+
 file_data = None
 #If args.lookup is set, then lookup price information for the item.
-if args.lookup is None:
-	print(Item(wiki_ge.get_id(int(args.lookup))))
+if args.lookup is not None:
+	print(Item(wiki_ge.get_id(int(args.lookup), None)))
