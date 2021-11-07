@@ -28,4 +28,4 @@ wiki_ge = WikiGe("config.json")
 file_data = None
 #If args.lookup is set, then lookup price information for the item.
 if args.lookup is not None:
-	print(Item(wiki_ge.get_id(int(args.lookup), None)))
+	print(Item(wiki_ge.get_id(args.lookup, None)))

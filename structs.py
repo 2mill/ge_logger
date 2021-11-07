@@ -2,13 +2,31 @@ from tools import json_load, id_dict
 import tools
 import requests
 from datetime import date
+give_it_back: str = lambda output, addition: f"{output}{addition}\n"
 
 class Item:
 	def __init__(self, item_data):
 		self.item_data = item_data
 		self.item_data['timestamp'] = date.today()
 	def __str__(self) -> str:
-		output = f"{self.item_data['id']}\pricing: {self.item_data['pricing']}\n"
+		output = give_it_back("", self.item_data['name'])
+		output = give_it_back(output, self.item_data['id'])
+		output = give_it_back(output, "PRICING DATA:")
+		output = give_it_back(
+			output,
+			f"HIGH: {tools.format_commas_gp(self.item_data['pricing']['high'])}"
+		)
+		output = give_it_back(
+			output,
+			f"LOW: {tools.format_commas_gp(self.item_data['pricing']['low'])}"
+		)
+		# This still needs to be figured out.
+		# ouput = give_it_back(
+		# 	output,
+		# 	f"TIME SPAN:{date.now()}"
+		# )
+		# output = f"{self.item_data['id']}pricing: {self.item_data['pricing']}\n"
+		# output = f"{output}high:{tools.format_commas_gp(self.item_data['pricing']['high'])}"
 		return output
 class WikiGe:
 	def __init__(self, config_filepath:str) -> None:
@@ -22,8 +40,9 @@ class WikiGe:
 		link:str = tools.id_link(id)
 		info = requests.get(link, headers=self.header).json()
 		item_data: dict = {
-			'id': str(id),
-			'pricing': info['data'][str(id)]
+			'id': id,
+			'name': self.id_dict[int(id)],
+			'pricing': info['data'][id]
 		}
 		# item_data: dict = info['data']
 		return item_data
