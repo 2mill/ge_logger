@@ -2,19 +2,47 @@ from tools import json_load, id_dict
 import tools
 import requests
 from datetime import date
+import datetime
 give_it_back: str = lambda output, addition: f"{output}{addition}\n"
+date.fromtimestamp(555)
 
+
+def set_dates(pricing: dict) -> dict:
+	"""
+	Take item data information and assign date objects to the highTime and lowTIme dict
+	Returns a new dict object
+	"""
+
+	# TODO:Proper error handling
+	pricing_types = [
+		'high',
+		'low'
+	]
+
+	# TODO: Simplify this part to just be pricing w/o item_data
+	for type in pricing_type:
+		pricing[f'{type}Time'] = date.fromtimestamp(pricing)
+	for type in pricing_types:
+		item_data['pricing'][f'{type}Time'] = date.fromtimestamp(item_data['pricing'][f'{type}Time'])
+	return item_data
 class Item:
 	def __init__(self, item_data):
 		self.item_data = item_data
-		self.item_data['timestamp'] = date.today()
+		print(self.item_data['pricing']['highTime'])
+		if self.item_data is not None:
+			self.item_data['timestamp'] = date.today()
 	def __str__(self) -> str:
+		if self.item_data is None:
+			return "DNE"
 		output = give_it_back("", self.item_data['name'])
-		output = give_it_back(output, self.item_data['id'])
+		output = give_it_back(
+			"",
+			f"{self.item_data['name']}:{self.item_data['id']}"
+		)
 		output = give_it_back(output, "PRICING DATA:")
 		output = give_it_back(
 			output,
-			f"HIGH: {tools.format_commas_gp(self.item_data['pricing']['high'])}"
+			f"HIGH: {tools.format_commas_gp(self.item_data['pricing']['high'])} at {date.fromtimestamp(self.item_data['pricing']['highTime'])}"
 		)
 		output = give_it_back(
 			output,
@@ -37,13 +65,17 @@ class WikiGe:
 		}
 		self.id_dict: dict = id_dict("item_data.json")
 	def get_id(self, id: int, timeseries: str) -> dict:
+
 		link:str = tools.id_link(id)
 		info = requests.get(link, headers=self.header).json()
-		item_data: dict = {
-			'id': id,
-			'name': self.id_dict[int(id)],
-			'pricing': info['data'][id]
-		}
+		try:
+			item_data: dict = {
+				'id': id,
+				'name': self.id_dict[int(id)],
+				'pricing': info['data'][id]
+			}
+		except KeyError:
+			return None
 		# item_data: dict = info['data']
 		return item_data
 	def get_name(self, name:str, timeseries: str) -> dict:
