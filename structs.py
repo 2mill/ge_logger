@@ -13,24 +13,22 @@ def set_dates(pricing: dict) -> dict:
 	Returns a new dict object
 	"""
 
-	# TODO:Proper error handling
+	# TODO:Proper error handling for invalid input
 	pricing_types = [
 		'high',
 		'low'
 	]
-
-	# TODO: Simplify this part to just be pricing w/o item_data
-	for type in pricing_type:
-		pricing[f'{type}Time'] = date.fromtimestamp(pricing)
 	for type in pricing_types:
-		item_data['pricing'][f'{type}Time'] = date.fromtimestamp(item_data['pricing'][f'{type}Time'])
-	return item_data
+		print(pricing[f'{type}Time'])
+		
+		pricing[f'{type}Time'] = date.fromtimestamp(pricing[f'{type}Time'])
+	return pricing
 class Item:
 	def __init__(self, item_data):
 		self.item_data = item_data
 		print(self.item_data['pricing']['highTime'])
 		if self.item_data is not None:
-			self.item_data['timestamp'] = date.today()
+			self.item_data['int_timestamp'] = date.today()
 	def __str__(self) -> str:
 		if self.item_data is None:
 			return "DNE"
@@ -40,13 +38,29 @@ class Item:
 			f"{self.item_data['name']}:{self.item_data['id']}"
 		)
 		output = give_it_back(output, "PRICING DATA:")
+
+		# TODO: Figure out why strftime is not working properly.
+		format: str = r"%d/%m/%Y %X"
+		high_low: list = ['high', 'low']
+		template: str = "{}: {} at {}"
+		# Fucked shit up here and now I am tired.
+		# Responsiblities for tomorrw's me.
+		for version in high_low:
+			template.format(
+				version.upper(),
+				tools.format_commas_gp(self.item_data['pricing'][version]),
+				self.item_data['pricing'][f'{version}Time'].strftime(format)
+			)
+			output = give_it_back(output, template)
+
+
 		output = give_it_back(
 			output,
-			f"HIGH: {tools.format_commas_gp(self.item_data['pricing']['high'])} at {date.fromtimestamp(self.item_data['pricing']['highTime'])}"
+			f"HIGH: {tools.format_commas_gp(self.item_data['pricing']['high'])} at {self.item_data['pricing']['highTime'].strftime(format)}"
 		)
 		output = give_it_back(
 			output,
-			f"LOW: {tools.format_commas_gp(self.item_data['pricing']['low'])}"
+			f"LOW: {tools.format_commas_gp(self.item_data['pricing']['low'])} at {self.item_data['pricing']['lowTime'].strftime(format)}"
 		)
 		# This still needs to be figured out.
 		# ouput = give_it_back(
@@ -72,7 +86,7 @@ class WikiGe:
 			item_data: dict = {
 				'id': id,
 				'name': self.id_dict[int(id)],
-				'pricing': info['data'][id]
+				'pricing': set_dates(info['data'][id])
 			}
 		except KeyError:
 			return None
