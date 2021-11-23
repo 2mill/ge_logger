@@ -1,18 +1,11 @@
 
-import argparse, json 
-import requests
-import tools
+import argparse, json, requests 
 from structs import Item, WikiGe
 from os.path import exists
+import tools, commands
 # first we will just be taking an id argument, and outputting the id's information high and low prices for the day.
 
-parser = argparse.ArgumentParser(prog="ge_track", description="Used for checking the item low and high price for a certain ID")
-parser.add_argument('--update', action="store_true", required=False, help="Updates the list for new item information")
-parser.add_argument('--lookup', type=str, required=False, help="Looks up an item given an ID number or item name")
-parser.add_argument('--init', action="store_true", required=False, help="Initialize the configuration fil")
-parser.add_argument('--track', type=str, required=False, help="Start tracking an item, latest price data if not given.")
-parser.add_argument('--price', type=int, required=False, help="The price of the tracked item.")
-args = parser.parse_args();
+args = commands.get_args()
 
 
 if not exists("./item_data.json") or args.update:
@@ -28,4 +21,10 @@ wiki_ge = WikiGe("config.json")
 file_data = None
 #If args.lookup is set, then lookup price information for the item.
 if args.lookup is not None:
-	print(Item(wiki_ge.get_id(args.lookup, None)))
+	# print(Item(wiki_ge.get_id(args.lookup, None)))
+	item_data = wiki_ge.get_id(args.lookup, None)
+	if item_data is None:
+		print("Item is non tradable, or not found")
+	else:
+		item = Item(item_data)
+		print(item)

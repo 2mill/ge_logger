@@ -9,54 +9,23 @@ give_it_back: str = lambda output, addition: f"{output}{addition}\n"
 date.fromtimestamp(555)
 
 
-def set_dates(pricing: dict) -> dict:
-	"""
-	Take item data information and assign date objects to the highTime and lowTIme dict
-	Returns a new dict object
-	"""
-
-	# TODO:Proper error handling for invalid input
-	pricing_types = [
-		'high',
-		'low'
-	]
-	for type in pricing_types:
-		print(pricing[f'{type}Time'])
-		
-		pricing[f'{type}Time'] = date.fromtimestamp(pricing[f'{type}Time'])
-	return pricing
 
 class Item:
 	def __init__(self, item_data):
 		self.item_data = item_data
-		print(self.item_data['pricing']['highTime'])
-		if self.item_data is not None:
-			self.item_data['int_timestamp'] = date.today()
+		self.name = item_data['name']
+		self.id = item_data['id']
+		self.high_price = {
+			'price': item_data['pricing']['high'],
+			'time': item_data['pricing']['highTime']
+		}
+		self.low_price = {
+			'price': item_data['pricing']['low'],
+			'time': item_data['pricing']['lowTime']
+		}
+
 	def __str__(self) -> str:
-
-		#TODO: Place all of this bottom code into another function.
-		# Make more readable.
-		if self.item_data is None:
-			return "DNE"
-		output = give_it_back("", self.item_data['name'])
-		output = give_it_back(
-			"",
-			f"{self.item_data['name']}:{self.item_data['id']}"
-		)
-		output = give_it_back(output, "PRICING DATA:")
-
-		# TODO: Figure out why strftime is not working properly.
-		format: str = r"%d/%m/%Y %X"
-		high_low: list = ['high', 'low']
-		template: str = "{high_low}: {price} at {time}"
-		for version in high_low:
-			addition: str = template.format(
-				high_low = version.upper(),
-				price = tools.format_commas_gp(self.item_data['pricing'][version]),
-				time = self.item_data['pricing'][f'{version}Time'].strftime(format)
-			)
-			output = give_it_back(output, addition)
-		return output
+		return "{}:{}".format(self.name, self.id)
 class WikiGe:
 	def __init__(self, config_filepath:str) -> None:
 		header_config = json_load(config_filepath)
@@ -66,19 +35,32 @@ class WikiGe:
 		}
 		self.id_dict: dict = id_dict("item_data.json")
 	def get_id(self, id: int, timeseries: str) -> dict:
-
 		link:str = tools.id_link(id)
 		info = requests.get(link, headers=self.header).json()
-		try:
-			item_data: dict = {
-				'id': id,
-				'name': self.id_dict[int(id)],
-				'pricing': set_dates(info['data'][id])
+		return reformat(item_data)
+
+	def _reformat(item_data: dict) -> dict:
+		"""
+			Not the biggest fan of how OSRS Wiki formats their json.
+			Therefore, I reformat it to make it more human readable.
+		"""
+		# Extracts the id from the dictionary as a string
+		id = list(item_data.keys())[0]
+		# TODO: Add a time delta
+		return {
+			'id' : str(id),
+			'name' : item_data[id],
+			'pricing': {
+				'high': {
+					'price': item_data[id]['high'],
+					'time': item_data[id]['highTime']
+				},
+				'low': {
+					'price': item_data[id]['low'],
+					'time': item_data[id]['lowTime']
+				}
 			}
-		except KeyError:
-			return None
-		# item_data: dict = info['data']
-		return item_data
+		}
 	def get_name(self, name:str, timeseries: str) -> dict:
 		for id in list(self.id_dict.keys):
 			# If the dictionary item matches the name, then plug it into get_id
