@@ -3,6 +3,8 @@ import tools
 import requests
 from datetime import date
 import datetime
+
+# Remove this function. Not readable, bland, stupid.
 give_it_back: str = lambda output, addition: f"{output}{addition}\n"
 date.fromtimestamp(555)
 
@@ -23,6 +25,7 @@ def set_dates(pricing: dict) -> dict:
 		
 		pricing[f'{type}Time'] = date.fromtimestamp(pricing[f'{type}Time'])
 	return pricing
+
 class Item:
 	def __init__(self, item_data):
 		self.item_data = item_data
@@ -30,6 +33,9 @@ class Item:
 		if self.item_data is not None:
 			self.item_data['int_timestamp'] = date.today()
 	def __str__(self) -> str:
+
+		#TODO: Place all of this bottom code into another function.
+		# Make more readable.
 		if self.item_data is None:
 			return "DNE"
 		output = give_it_back("", self.item_data['name'])
@@ -42,33 +48,14 @@ class Item:
 		# TODO: Figure out why strftime is not working properly.
 		format: str = r"%d/%m/%Y %X"
 		high_low: list = ['high', 'low']
-		template: str = "{}: {} at {}"
-		# Fucked shit up here and now I am tired.
-		# Responsiblities for tomorrw's me.
+		template: str = "{high_low}: {price} at {time}"
 		for version in high_low:
-			template.format(
-				version.upper(),
-				tools.format_commas_gp(self.item_data['pricing'][version]),
-				self.item_data['pricing'][f'{version}Time'].strftime(format)
+			addition: str = template.format(
+				high_low = version.upper(),
+				price = tools.format_commas_gp(self.item_data['pricing'][version]),
+				time = self.item_data['pricing'][f'{version}Time'].strftime(format)
 			)
-			output = give_it_back(output, template)
-
-
-		output = give_it_back(
-			output,
-			f"HIGH: {tools.format_commas_gp(self.item_data['pricing']['high'])} at {self.item_data['pricing']['highTime'].strftime(format)}"
-		)
-		output = give_it_back(
-			output,
-			f"LOW: {tools.format_commas_gp(self.item_data['pricing']['low'])} at {self.item_data['pricing']['lowTime'].strftime(format)}"
-		)
-		# This still needs to be figured out.
-		# ouput = give_it_back(
-		# 	output,
-		# 	f"TIME SPAN:{date.now()}"
-		# )
-		# output = f"{self.item_data['id']}pricing: {self.item_data['pricing']}\n"
-		# output = f"{output}high:{tools.format_commas_gp(self.item_data['pricing']['high'])}"
+			output = give_it_back(output, addition)
 		return output
 class WikiGe:
 	def __init__(self, config_filepath:str) -> None:
