@@ -1,5 +1,6 @@
 
 import argparse, json, requests 
+import wikige
 from structs import Item, WikiGe
 from os.path import exists
 import tools, commands
