@@ -1,4 +1,3 @@
-from typing_extensions import Required
 import tools
 import requests
 from structs import Item
@@ -15,7 +14,10 @@ def get(key: str, timeseries: str, config_filepath) -> dict:
 	item = tools.find_item(items, key)
 	if item == []: return {}
 	return tools.reformat(
-		requests.get(tools.api_link(item[0]))
+		requests.get(
+			tools.id_link(item[0]), 
+			headers=tools.header(config_filepath)
+		).json()['data']
 	)
 def get_mapping(self) -> object:
 	request = requests.get(tools.mapping_link, headers=self.header)

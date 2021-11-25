@@ -2,11 +2,15 @@ import json, requests
 import re
 
 is_id: bool = lambda input: re.match(r"^\d+$", input) is not None
-
-
-	# if is_id(lookup):
-	pass
 json_load: str = lambda location: json.load(open(f"./{location}"))
+def header(config_filepath: str) -> dict:
+	file = json_load(config_filepath)
+	print(file)
+	return {
+		'User-agent': file['user-agent'],
+		'email': file['email']
+	}
+
 # json_request: json = lambda url, header: json.load(requests.get(location, headers=header))
 api_link:str = r"https://prices.runescape.wiki/api/v1/osrs/"
 mapping_link:str = f"{api_link}mapping"
@@ -45,16 +49,17 @@ def find_item(items: list, identifier: str) -> list:
 	"""
 
 def reformat(item_data: dict) -> dict:
+	print(item_data)
 	"""
 		Not the biggest fan of how OSRS Wiki formats their json.
 		Therefore, I reformat it to make it more human readable.
 	"""
 	# Extracts the id from the dictionary as a string
-	id = list(item_data.keys())[0]
+	id = str(list(item_data.keys())[0])
 	# TODO: Add a time delta
 	return {
-		'id' : str(id),
-		'name' : item_data[id],
+		'id' : id,
+		'name' : find_item(id)[1],
 		'pricing': {
 			'high': {
 				'price': item_data[id]['high'],
