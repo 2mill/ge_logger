@@ -5,7 +5,6 @@ is_id: bool = lambda input: re.match(r"^\d+$", input) is not None
 json_load: str = lambda location: json.load(open(f"./{location}"))
 def header(config_filepath: str) -> dict:
 	file = json_load(config_filepath)
-	print(file)
 	return {
 		'User-agent': file['user-agent'],
 		'email': file['email']
@@ -36,7 +35,7 @@ def item_list(filename: str) -> list:
 def find_item(items: list, identifier: str) -> list:
 	for i in range(len(items)):
 		item = items[i]
-		if item[0] == identifier or item[1] == identifier:
+		if item[0] == identifier or item[1].lower() == identifier:
 			return item
 	return []
 
@@ -48,26 +47,24 @@ def find_item(items: list, identifier: str) -> list:
 		I need to implement my own split search.
 	"""
 
-def reformat(item_data: dict) -> dict:
-	print(item_data)
+def reformat(item_data: dict, item:list) -> dict:
 	"""
 		Not the biggest fan of how OSRS Wiki formats their json.
 		Therefore, I reformat it to make it more human readable.
 	"""
-	# Extracts the id from the dictionary as a string
-	id = str(list(item_data.keys())[0])
+	id_num, name = item
 	# TODO: Add a time delta
 	return {
-		'id' : id,
-		'name' : find_item(id)[1],
+		'id' : id_num,
+		'name' : name,
 		'pricing': {
 			'high': {
-				'price': item_data[id]['high'],
-				'time': item_data[id]['highTime']
+				'price': item_data[id_num]['high'],
+				'time': item_data[id_num]['highTime']
 			},
 			'low': {
-				'price': item_data[id]['low'],
-				'time': item_data[id]['lowTime']
+				'price': item_data[id_num]['low'],
+				'time': item_data[id_num]['lowTime']
 			}
 		}
 	}

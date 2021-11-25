@@ -25,7 +25,7 @@ file_data = None
 if args.lookup is not None:
 	# print(Item(wiki_ge.get_id(args.lookup, None)))
 	item_data = wikige.get(args.lookup, None, './config.json')
-	if item_data is None:
+	if item_data == {}:
 		print("Item is non tradable, or not found")
 	else:
 		item = Item(item_data)
