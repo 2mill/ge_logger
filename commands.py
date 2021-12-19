@@ -6,6 +6,7 @@ def get_args() -> ArgumentParser:
 	parser.add_argument('--init', action="store_true", required=False, help="Initialize the configuration fil")
 	parser.add_argument('--track', type=str, required=False, help="Start tracking an item, latest price data if not given.")
 	parser.add_argument('--price', type=int, required=False, help="The price of the tracked item.")
+
 	return parser.parse_args()
 
 

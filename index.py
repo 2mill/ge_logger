@@ -21,7 +21,10 @@ if not exists("./item_data.json") or args.update:
 
 
 file_data = None
+if args.update is not None:
+	print(tools.download_items())
 #If args.lookup is set, then lookup price information for the item.
+
 if args.lookup is not None:
 	# print(Item(wiki_ge.get_id(args.lookup, None)))
 	item_data = wikige.get(args.lookup, None, './config.json')

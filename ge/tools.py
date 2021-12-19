@@ -3,18 +3,26 @@ import re
 
 is_id: bool = lambda input: re.match(r"^\d+$", input) is not None
 json_load: str = lambda location: json.load(open(f"./{location}"))
-def header(config_filepath: str) -> dict:
-	file = json_load(config_filepath)
-	return {
-		'User-agent': file['user-agent'],
-		'email': file['email']
-	}
+
+header = {
+	'User-agent': 'github.com/2mill/ge_logger'
+}
+api_link:str = r"https://prices.runescape.wiki/api/v1/osrs/"
 
 # json_request: json = lambda url, header: json.load(requests.get(location, headers=header))
-api_link:str = r"https://prices.runescape.wiki/api/v1/osrs/"
 mapping_link:str = f"{api_link}mapping"
 id_link = lambda id: f"{api_link}latest?id={id}"
 format_commas_gp: str = lambda price: "{:,}gp".format(price)
+
+# Simple function where the item data is pulled down.
+def download_items() -> bool:
+	osrsbox_endpoint: str = r"https://www.osrsbox.com/osrsbox-db/items-search.json"
+	item_data = requests.get(osrsbox_endpoint)
+	if item_data.status_code >= 400:
+		return False
+	with open("./data/item_data.json", 'w') as f:
+		json.dump(item_data.json(), f)
+	return True
 
 def item_list(filename: str) -> list:
 	items = []
