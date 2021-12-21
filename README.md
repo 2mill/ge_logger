@@ -7,3 +7,7 @@ Commands:
 --init Initilize command line tool configuration files that will be saved into `~/.config/ge_logger`
 --track Begin tracking an items low and high price. 
 --price The current prices of tracked items and their current compared to their previous prices.
+
+## branch lib
+The purpose of this branch is to split the CLI components away from the actual library components.
+This, I believe, will help compartmentalize the program more
