@@ -3,7 +3,6 @@ import argparse, json, requests
 import wikige
 from structs import Item
 from os.path import exists
-import wikige
 import tools, commands
 # first we will just be taking an id argument, and outputting the id's information high and low prices for the day.
 
