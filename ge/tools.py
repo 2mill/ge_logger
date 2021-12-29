@@ -1,5 +1,7 @@
 import json, requests
 import re
+import osrsbox
+from structs import Item
 
 is_id: bool = lambda input: re.match(r"^\d+$", input) is not None
 json_load: str = lambda location: json.load(open(f"./{location}"))
@@ -40,21 +42,26 @@ def item_list(filename: str) -> list:
 # TODO: Proper config file saving into the correct path.
 
 
-def find_item(items: list, identifier: str) -> list:
-	for i in range(len(items)):
-		item = items[i]
-		if item[0] == identifier or item[1].lower() == identifier:
-			return item
-	return []
 
-	# TODO: IMPLEMENT BINARY SEARCH FROM HERE:
-	# http://www.rosettacode.org/wiki/Binary_search#Python:_Recursive
-	"""
-		Due to the nature of my list structure,
-		and me not wanting to figure out sort properly.
-		I need to implement my own split search.
-	"""
-
+def get_name(item_list:list, name:str) -> tuple(Item, None):
+	for item in item_list:
+		if item.name == name:
+			return get_id(item)
+	return None
+def get_id(item_list: list, identifier:str) -> tuple(Item, None):
+	#idenftifier can either be the name or id of the item.
+	for item in item_list:
+		if item.name == identifier or item.id == identifier:
+			item_data = requests.get(
+				id_link(item.id),
+				headers=header
+			).json()
+			formatted = reformat(
+				item_data['data'],
+				[item.id, item.name]
+			)
+			return Item(formatted)
+	return None
 def reformat(item_data: dict, item:list) -> dict:
 	"""
 		Not the biggest fan of how OSRS Wiki formats their json.
