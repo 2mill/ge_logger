@@ -1,13 +1,4 @@
-# Ge Logger
-General tool that can be used to lookup data on items from OSRS WIKI's Grand Exchange.
-
-Commands:
---lookup [name|id]	Specify a name or ID to be looked up and found.
---update 	Update the item cache for new tradable items. Item cache attempts updates every eight days.
---init Initilize command line tool configuration files that will be saved into `~/.config/ge_logger`
---track Begin tracking an items low and high price. 
---price The current prices of tracked items and their current compared to their previous prices.
-
-## branch lib
-The purpose of this branch is to split the CLI components away from the actual library components.
-This, I believe, will help compartmentalize the program more
+# WikiGe
+Hello, please do not use this, because it is not working.
+##Purpose
+An API wrapper for the OSRS Wiki GE Tracker API in Python.
