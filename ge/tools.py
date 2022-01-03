@@ -48,18 +48,18 @@ def item_list(filename: str) -> list:
 # 		if item.name == name:
 # 			return get_id(item)
 # 	return None
-def get_id(item_list: list, identifier:str):
+def get_id(item_list: list, identifier):
 	#idenftifier can either be the name or id of the item.
+	if isinstance(identifier, str): identifier = identifier.lower()
 	for item in item_list:
-		if item.name == identifier or str(item.id) == identifier:
-			print("Found item")
+		if item.name.lower() == identifier or item.id == identifier:
 			item_data = requests.get(
 				id_link(item.id),
 				headers=header
 			).json()
 			formatted = reformat(
 				item_data['data'],
-				[str(item.id), item.name]
+				[item.id, item.name]
 			)
 			return Item(formatted)
 	return None
@@ -69,6 +69,7 @@ def reformat(item_data: dict, item:list) -> dict:
 		Therefore, I reformat it to make it more human readable.
 	"""
 	id_num, name = item
+	id_num = str(id_num)
 	# TODO: Add a time delta
 	return {
 		'id' : id_num,
