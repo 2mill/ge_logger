@@ -1,6 +1,5 @@
-import tools
 import requests
-from structs import Item
+from ge.structs import Item
 
 
 class WikiGe():

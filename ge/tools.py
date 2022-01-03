@@ -1,7 +1,7 @@
 import json, requests
 import re
 import osrsbox
-from structs import Item
+from ge.structs import Item
 
 is_id: bool = lambda input: re.match(r"^\d+$", input) is not None
 json_load: str = lambda location: json.load(open(f"./{location}"))
@@ -43,15 +43,16 @@ def item_list(filename: str) -> list:
 
 
 
-def get_name(item_list:list, name:str) -> tuple(Item, None):
-	for item in item_list:
-		if item.name == name:
-			return get_id(item)
-	return None
-def get_id(item_list: list, identifier:str) -> tuple(Item, None):
+# def get_name(item_list:list, name:str) -> tuple(Item, None):
+# 	for item in item_list:
+# 		if item.name == name:
+# 			return get_id(item)
+# 	return None
+def get_id(item_list: list, identifier):
 	#idenftifier can either be the name or id of the item.
+	if isinstance(identifier, str): identifier = identifier.lower()
 	for item in item_list:
-		if item.name == identifier or item.id == identifier:
+		if item.name.lower() == identifier or item.id == identifier:
 			item_data = requests.get(
 				id_link(item.id),
 				headers=header
@@ -68,6 +69,7 @@ def reformat(item_data: dict, item:list) -> dict:
 		Therefore, I reformat it to make it more human readable.
 	"""
 	id_num, name = item
+	id_num = str(id_num)
 	# TODO: Add a time delta
 	return {
 		'id' : id_num,
