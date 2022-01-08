@@ -2,11 +2,10 @@ from enum import Enum
 import json
 import requests as req
 
-from requests.api import request
 header = {
 	'User-agent': 'github.com/2mill/ge_logger'
 }
-endpoint: str = "prices.runescape.wiki/api/v1/osrs"
+endpoint: str = "https://prices.runescape.wiki/api/v1/osrs"
 latest: str = "/latest"
 timeseries: str  = "/timeseries"
 mapping: str = "/mapping"
@@ -22,14 +21,18 @@ def find_latest_endpoint(id: str) -> str:
 		return return_endpoint
 	else:
 		return f"{return_endpoint}?id={id}"
-def get_latest(id: str) -> Request:
+def get_latest(id: str) -> object:
 	latest_endpoint: str = find_latest_endpoint(id)
 	return req.get(latest_endpoint, headers=header)
 
-def get_mapping() -> Request:
+def get_mapping() -> object:
 	mapping_endpoint = f"{endpoint}{mapping}"
 	return req.get(mapping_endpoint, headers=header)
-def get_timestep(id: str, Timestep) -> Request:
-	pass
+def get_timestep(id: str, timestep: Timestep) -> object:
+	if id is None or timestep is None: return None
+	timestep_endpoint = f"{endpoint}{timeseries}?timestep={timestep}&id={id}"
+	return req.get(timestep_endpoint, headers=header)
+
+
 
 
