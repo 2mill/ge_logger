@@ -1,5 +1,6 @@
 import math
 from datetime import date
+from osrsbox import items_api
 
 # Remove this function. Not readable, bland, stupid.
 give_it_back: str = lambda output, addition: f"{output}{addition}\n"
@@ -40,4 +41,14 @@ class PriceData:
 		self.low_price = pricing_data[2]
 		self.low_time = pricing_data[3]
 		#TODO: FIgure calculate change in price.
-
+class ItemList:
+	def __init__(self):
+		self.item_list = items_api.load()
+	def find_id(id: int) -> object: 
+		for item in self.item_list:
+			if item.id == id: return item
+		return None
+	def find_name(name: str) -> object:
+		for item in self.item_list:
+			if item.name.lower() == name.lower(): return item
+		return None
