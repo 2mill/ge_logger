@@ -16,9 +16,4 @@ def get(key: str, timeseries: str, config_filepath) -> dict:
 			headers=tools.header(config_filepath)
 		).json()['data'],
 		item
-
 	)
-def get_mapping(self) -> object:
-	request = requests.get(tools.mapping_link, headers=self.header)
-	if (request.status_code == 404): print("Got a 404")
-	return request.json()
