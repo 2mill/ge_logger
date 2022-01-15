@@ -17,11 +17,15 @@ class Timestep(Enum):
 def find_latest_endpoint(id: str) -> str:
 	return_endpoint = f"{endpoint}{latest}"
 	if id is None:
-		return return_endpoint
+		return f"{endpoint}{latest}"
 	else:
 		return f"{return_endpoint}?id={id}"
 def get_latest(id: str) -> object:
 	latest_endpoint: str = find_latest_endpoint(id)
+	return req.get(latest_endpoint, headers=header)
+
+def get_latest_all() -> object:
+	latest_endpoint: str = find_latest_endpoint()
 	return req.get(latest_endpoint, headers=header)
 
 def get_mapping() -> object:

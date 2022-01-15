@@ -3,17 +3,16 @@ from ge.endpoints import get_latest, get_mapping, get_timestep
 import structs
 import json
 
-def lookup(identifier) -> object:
-	item_list = structs.ItemList
-	try:
-		item = item_list.find(identifier)
-		pricing = reformat(item.id, get_latest(item.id).json())
+def lookup(identifier, item_list) -> object:
+	item = item_list.find(identifier)
+	pricing = reformat(item.id, get_latest(item.id).json())
+	return structs.PricedItem(item, pricing)
 
-		# Appending value to the object given by osrsbox
-		item.pricing = structs.Pricing(pricing)
-		return item
-	except ValueError:
-		return ValueError("Only ints and strings can be passed")
+def lookup_all(item_list) -> list:
+	items = get_latest(None).json()['data']
+	pricing_list = []
+	pass
+
 
 
 

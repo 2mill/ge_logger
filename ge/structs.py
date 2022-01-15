@@ -23,4 +23,7 @@ class ItemList:
 	def find(self, identifier) -> object:
 		if type(identifier) is int: return self.find_id(identifier)
 		elif type(identifier) is str: return self.find_name(identifier)
-		return ValueError("find() only accepts str or int")
+
+class PricedItem:
+	def __init__(self, pricing: Pricing, osrsbox_item):
+		osrsbox_item.pricing = pricing
