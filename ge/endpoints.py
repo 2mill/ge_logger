@@ -1,5 +1,4 @@
 from enum import Enum
-import json
 import requests as req
 
 header = {
