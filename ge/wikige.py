@@ -1,20 +1,19 @@
 import requests
-from ge.structs import PricedItem
-import structs
-from structs import ItemList, PricedItem
-import utils
-import endpoints
+from ge.structs import ItemList, PricedItem
+from ge import utils
+from ge import endpoints
 
 
 class WikiGe():
-	def __init__():
+	def __init__(self):
 		self.item_list = ItemList()
 	def lookup(self, identifier) -> PricedItem:
 		# return utils.lookup(identifier)
 		if type(identifier) is not int and type(identifier) is not str:
-			return ValueError("Lookup only accepts ints or strings")
+			raise ValueError("Lookup only accepts ints or strings")
 		return utils.lookup(identifier, self.item_list)
 	def lookup_all(self) -> PricedItem:
+		utils.lookup_all(self.item_list)
 		pass;
 
 

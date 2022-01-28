@@ -9,13 +9,17 @@ class Pricing:
 		self.high_time = pricing_data['high']['time']
 		self.low_price = pricing_data['low']['price']
 		self.low_time = pricing_data['low']['time']
+
+
 class ItemList:
 	def __init__(self):
-		self.item_list = items_api.load()
+		self.item_list: list = items_api.load()
+
 	def find_id(self, id: int) -> object: 
 		for item in self.item_list:
 			if item.id == id: return item
-		return None
+		# Still wondering if I should return or raise here.
+		return ItemNotFound
 	def find_name(self, name: str) -> object:
 		for item in self.item_list:
 			if item.name.lower() == name.lower(): return item
@@ -26,4 +30,9 @@ class ItemList:
 
 class PricedItem:
 	def __init__(self, pricing: Pricing, osrsbox_item):
-		osrsbox_item.pricing = pricing
+		self.item = osrsbox_item
+		self.pricing = pricing
+
+#Exceptions
+class ItemNotFound(Exception):
+	pass
