@@ -18,29 +18,22 @@ def lookup_all(item_list) -> list:
 	not_found = 0
 	for identifier in all_items_pricing_json:
 		items = items + 1	
-
 		# OSRSBOX DB and Wiki can be out of date.
 		# Figure out how this problem should be handled.
-		item = item_list.find(int(identifier))
 
-		if item is None:
-			not_found = not_found + 1
-			print(item_list)
-			print(int(identifier))
-			print(item)
-			print(f"{items} {not_found}")
+		try:
+			item = item_list.find(int(identifier))
+		except structs.ItemNotFound:
+			item = structs.Item(identifier=int(identifier))
 
-		
-
-		# This needs to be here for the reformater.
-		# item_pricing_json = {
-		# 	identifier:all_items_pricing_json[identifier]
-		# }
-		# pricing = reformat(identifier, item_pricing_json)
-		# item = item_list.find(int(identifier))
-		# priced_item = structs.PricedItem(pricing,item)
-		# pricing_list.append(priced_item)
-	# return pricing_list	
+		item_pricing_json = {
+			identifier:all_items_pricing_json[identifier]
+		}
+		pricing = reformat(identifier, item_pricing_json)
+		pricing = structs.Pricing(pricing)
+		item.set_pricing(pricing)
+		pricing_list.append(item)
+	return pricing_list	
 
 
 

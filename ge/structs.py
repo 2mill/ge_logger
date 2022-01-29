@@ -16,14 +16,15 @@ class ItemList:
 		self.item_list: list = items_api.load()
 
 	def find_id(self, id: int) -> object: 
+		
 		for item in self.item_list:
-			if item.id == id: return item
+			if item.id == id: return Item(item.id, item.name, item.examine)
+		raise ItemNotFound
 		# Still wondering if I should return or raise here.
-		return ItemNotFound
 	def find_name(self, name: str) -> object:
 		for item in self.item_list:
-			if item.name.lower() == name.lower(): return item
-		return None
+			if item.name.lower() == name.lower(): return Item(item.id, item.name, item.examine)
+		return ItemNotFound
 	def find(self, identifier) -> object:
 		if type(identifier) is int: return self.find_id(identifier)
 		elif type(identifier) is str: return self.find_name(identifier)
@@ -31,6 +32,18 @@ class ItemList:
 class PricedItem:
 	def __init__(self, pricing: Pricing, osrsbox_item):
 		self.item = osrsbox_item
+		self.pricing = pricing
+class Item:
+	identifier: int
+	name: str
+	examin: str
+	pricing: PricedItem
+	def __init__(self, identifier=None, name=None, examine=None):
+		self.identifier = identifier
+		self.name = name
+		self.examin = examine
+		self.pricing = None
+	def set_pricing(self, pricing:PricedItem):
 		self.pricing = pricing
 
 #Exceptions

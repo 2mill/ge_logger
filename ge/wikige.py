@@ -14,7 +14,6 @@ class WikiGe():
 		return utils.lookup(identifier, self.item_list)
 	def lookup_all(self) -> PricedItem:
 		utils.lookup_all(self.item_list)
-		pass;
 
 
 def get(key: str, timeseries: str, config_filepath) -> dict:
