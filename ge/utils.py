@@ -5,9 +5,10 @@ import json
 
 def lookup(identifier, item_list) -> object:
 	item = item_list.find(identifier)
-	item_pricing_json = get_latest(item.id).json()
+	item_pricing_json = get_latest(item.id).json()['data']
 	pricing = reformat(item.id, item_pricing_json)
-	return structs.PricedItem(item, pricing)
+	item = structs.Item(item.id, item.name, pricing)
+	return item
 
 def lookup_all(item_list) -> list:
 	all_items_pricing_json:list= get_latest().json()['data']
@@ -27,6 +28,8 @@ def lookup_all(item_list) -> list:
 	item_pricing_json = {
 		identifier:all_items_pricing_json[identifier]
 	}
+
+
 	pricing = reformat(identifier, item_pricing_json)
 	pricing = structs.Pricing(pricing)
 	item.set_pricing(pricing)
@@ -36,6 +39,7 @@ def reformat(id:int, pricing_data: json) -> dict:
 	"""
 		Reformatting item data to be friendlier for structs.Pricing
 	"""
+	id = str(id)
 	return {
 		'high': {
 			'price': pricing_data[id]['high'],
@@ -48,6 +52,3 @@ def reformat(id:int, pricing_data: json) -> dict:
 	}
 
 
-
-class CorruptList(Exception):
-	pass

@@ -27,20 +27,13 @@ class ItemList:
 	def find(self, identifier) -> object:
 		if type(identifier) is int: return self.find_id(identifier)
 		elif type(identifier) is str: return self.find_name(identifier)
-
-class PricedItem:
-	def __init__(self, pricing: Pricing, osrsbox_item):
-		self.item = osrsbox_item
-		self.pricing = pricing
 class Item:
 	identifier: int
 	name: str
-	examine: str
-	pricing: PricedItem
-	def __init__(self, identifier=None, name=None, examine=None):
-		self.identifier = identifier
+	pricing: Pricing
+	def __init__(self, identifier=None, name=None, pricing=None):
+		self.id = identifier
 		self.name = name
-		self.examine = examine
 		self.pricing = None
-	def set_pricing(self, pricing:PricedItem):
+	def set_pricing(self,pricing: Pricing):
 		self.pricing = pricing
