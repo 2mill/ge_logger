@@ -9,13 +9,17 @@ class Pricing:
 		self.high_time = pricing_data['high']['time']
 		self.low_price = pricing_data['low']['price']
 		self.low_time = pricing_data['low']['time']
+
+
 class ItemList:
 	def __init__(self):
-		self.item_list = items_api.load()
+		self.item_list: list = items_api.load()
+
 	def find_id(self, id: int) -> object: 
 		for item in self.item_list:
 			if item.id == id: return item
 		return None
+		# Still wondering if I should return or raise here.
 	def find_name(self, name: str) -> object:
 		for item in self.item_list:
 			if item.name.lower() == name.lower(): return item
@@ -23,4 +27,13 @@ class ItemList:
 	def find(self, identifier) -> object:
 		if type(identifier) is int: return self.find_id(identifier)
 		elif type(identifier) is str: return self.find_name(identifier)
-		return ValueError("find() only accepts str or int")
+class Item:
+	identifier: int
+	name: str
+	pricing: Pricing
+	def __init__(self, identifier=None, name=None, pricing=None):
+		self.id = identifier
+		self.name = name
+		self.pricing = None
+	def set_pricing(self,pricing: Pricing):
+		self.pricing = pricing

@@ -1,30 +1,45 @@
 import re
 from ge.endpoints import get_latest, get_mapping, get_timestep
-import structs
+from ge import structs
 import json
 
-def lookup(identifier) -> object:
-	item_list = structs.ItemList
-	try:
-		item = item_list.find(identifier)
-		pricing = reformat(item.id, get_latest(item.id).json())
+def lookup(identifier, item_list) -> object:
+	item = item_list.find(identifier)
+	item_pricing_json = get_latest(item.id).json()['data']
+	pricing = reformat(item.id, item_pricing_json)
+	item = structs.Item(item.id, item.name, pricing)
+	return item
 
-		# Appending value to the object given by osrsbox
-		item.pricing = structs.Pricing(pricing)
-		return item
-	except ValueError:
-		return ValueError("Only ints and strings can be passed")
+def lookup_all(item_list) -> list:
+	all_items_pricing_json:list= get_latest().json()['data']
+	pricing_list = []
+	# the raw data is formatted with id first. 
+	for identifier in all_items_pricing_json:
+		# OSRSBOX DB and Wiki can be out of date.
+		# Figure out how this problem should be handled.
+		item = item_list.find(int(identifier))
+		if item is None:
+			item = structs.Item(int(identifier))
+		else:
+			item = structs.Item(item.id, item.name, item.examine)
 
 
+	# Remake the JSON listing to make it easier for the reformatter.
+	item_pricing_json = {
+		identifier:all_items_pricing_json[identifier]
+	}
 
-def update(item) -> object:
-	# Make a new item object with the most recent price for it.
-	return lookup(item.id)
 
+	pricing = reformat(identifier, item_pricing_json)
+	pricing = structs.Pricing(pricing)
+	item.set_pricing(pricing)
+	pricing_list.append(item)
+	return pricing_list	
 def reformat(id:int, pricing_data: json) -> dict:
 	"""
 		Reformatting item data to be friendlier for structs.Pricing
 	"""
+	id = str(id)
 	return {
 		'high': {
 			'price': pricing_data[id]['high'],
@@ -35,3 +50,5 @@ def reformat(id:int, pricing_data: json) -> dict:
 			'time': pricing_data[id]['lowTime']
 		}
 	}
+
+
