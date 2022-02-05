@@ -1,3 +1,4 @@
+from typing import Iterable
 from xml.dom.minidom import Identified
 import requests as req
 endpoint = "https://prices.runescape.wiki/api/v1/osrs/mapping"
@@ -33,7 +34,6 @@ class Item:
 		else:
 			self.low_alch = None
 			self.high_alch = None
-
 		# Some items don't have limit information
 		if 'limit' in item_information.keys():
 			self.limit = item_information['limit']
@@ -44,15 +44,19 @@ class Item:
 			pass
 
 
-class ItemList:
+
+class ItemList(Iterable):
+	_index: int = -1
 	def  __init__(self, add_pricing=False):
-		self.item_list = []
+		self.item_list: list = []
 		header = {
 			'User-agent': '2mill/osrs_exchange'
 		}
 		exchange_map = req.get(endpoint, headers=header).json()
 		for item_info in exchange_map:
 			self.item_list.append(Item(item_info))
+		self.item_list.sort(key=lambda item: item.id)
+
 	def _find_id(self, identifier: int):
 		for item in self.item_list: 
 			if item.id == identifer: return item
@@ -61,7 +65,21 @@ class ItemList:
 		for item in self.item_list:
 			if item.name == identifier: return item
 		return None
+	def __iter__(self):
+		return ItemListIterator(self)
+
 
 	def find(self, identifier) -> Item:
 		if type(identifier) == str: return self._find_name(identifier)
 		if type(identifier) == int: return self._find_id(identifier)
+class ItemListIterator:
+	def __init__(self, item_list:ItemList):
+		self.item_list = item_list.item_list
+		self.index = -1
+	def __next__(self):
+		self.index = self.index + 1
+		actual_index = self.index + 1
+		if actual_index == len(self.item_list):
+			raise StopIteration
+		else:
+			return self.item_list[self.index]

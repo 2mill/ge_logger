@@ -18,6 +18,16 @@ def test_item_list():
 	item_list = mapping.ItemList()
 	assert type(item_list.item_list) == list
 
+def test_item_list_sorted():
+	item_list = mapping.ItemList()
+	last_item = None
+	sortedd = True
+	for item in item_list:
+		if last_item is None: last_item = item
+		if last_item.id > item.id: sortedd = False
+	assert sortedd	
+
+
 
 
 
