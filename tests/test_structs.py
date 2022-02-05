@@ -1,10 +1,6 @@
 from ge import structs
 
 
-def test_invalid_item():
-	item_list: object = structs.ItemList()
-	item = item_list.find(500000)
-	assert item == None
 
 def test_valid_id():
 	item_list: object = structs.ItemList()
