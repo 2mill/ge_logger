@@ -1,5 +1,5 @@
-from osrsbox import items_api
-import osrsbox
+from typing import Iterable
+import requests as req
 
 # Remove this function. Not readable, bland, stupid.
 give_it_back: str = lambda output, addition: f"{output}{addition}\n"
@@ -11,29 +11,78 @@ class Pricing:
 		self.low_time = pricing_data['low']['time']
 
 
-class ItemList:
-	def __init__(self):
-		self.item_list: list = items_api.load()
-
-	def find_id(self, id: int) -> object: 
-		for item in self.item_list:
-			if item.id == id: return item
-		return None
-		# Still wondering if I should return or raise here.
-	def find_name(self, name: str) -> object:
-		for item in self.item_list:
-			if item.name.lower() == name.lower(): return item
-		return None
-	def find(self, identifier) -> object:
-		if type(identifier) is int: return self.find_id(identifier)
-		elif type(identifier) is str: return self.find_name(identifier)
 class Item:
-	identifier: int
 	name: str
-	pricing: Pricing
-	def __init__(self, identifier=None, name=None, pricing=None):
-		self.id = identifier
-		self.name = name
-		self.pricing = None
-	def set_pricing(self,pricing: Pricing):
-		self.pricing = pricing
+	id: int
+	examine: str
+	members: bool
+	low_alch: int
+	high_alch: int
+	limit: int
+	value: int #Still not sure what this is
+	high_price: int
+	high_time: int
+	low_price: int
+	low_time:int
+	def __init__(self, item_information, pricing=None):
+		self.examine = item_information['examine']
+		self.name= item_information['name']
+		self.id = item_information['id']
+		self.members = item_information['members']
+		self.value = item_information['value']
+
+		# Some items do not have an alch information
+		if 'lowalch' in item_information.keys():
+			self.low_alch = item_information['lowalch']
+			self.high_alch = item_information['highalch']
+		else:
+			self.low_alch = None
+			self.high_alch = None
+		# Some items don't have limit information
+		if 'limit' in item_information.keys():
+			self.limit = item_information['limit']
+		else: self.limit = None
+
+
+		if pricing is not None:
+			pass
+
+
+class ItemList(Iterable):
+	_index: int = -1
+	def  __init__(self, add_pricing=False):
+		self.item_list: list = []
+		header = {
+			'User-agent': '2mill/osrs_exchange'
+		}
+		exchange_map = req.get(endpoint, headers=header).json()
+		for item_info in exchange_map:
+			self.item_list.append(Item(item_info))
+		self.item_list.sort(key=lambda item: item.id)
+
+	def _find_id(self, identifier: int):
+		for item in self.item_list: 
+			if item.id == identifer: return item
+		return None
+	def _find_name(self, name:str):
+		for item in self.item_list:
+			if item.name == identifier: return item
+		return None
+	def __iter__(self):
+		return ItemListIterator(self)
+
+
+	def find(self, identifier) -> Item:
+		if type(identifier) == str: return self._find_name(identifier)
+		if type(identifier) == int: return self._find_id(identifier)
+class ItemListIterator:
+	def __init__(self, item_list:ItemList):
+		self.item_list = item_list.item_list
+		self.index = -1
+	def __next__(self):
+		self.index = self.index + 1
+		actual_index = self.index + 1
+		if actual_index == len(self.item_list):
+			raise StopIteration
+		else:
+			return self.item_list[self.index]
