@@ -1,5 +1,7 @@
 from typing import Iterable
 import requests as req
+import endpoints
+import json
 
 # Remove this function. Not readable, bland, stupid.
 give_it_back: str = lambda output, addition: f"{output}{addition}\n"
@@ -10,7 +12,28 @@ class Pricing:
 		self.low_price = pricing_data['low']['price']
 		self.low_time = pricing_data['low']['time']
 
+class ItemPricingInformation:
+	id: int
+	high:int
+	highTime: int
+	low: int
+	lowTime: int
+	def __init__(self, id:int, pricing_information):
+		self.id = id
+		if data != "{}":
+			self.high = data['high']
+			self.highTime = data['highTime']
+			self.low = data['low']
+			self.lowTime = data['lowTime']
 
+class ItemPricingInformationList:
+	def __init__(self, item_pricing_list):
+		self.item_list = []
+		for item in item_pricing_list:
+			self.item_list.append(ItemPricingInformation(int(item),item_pricing_list[item]))
+		self.item_list.sort(key=lambda item: item.id)
+	def find_id(self, id:int):
+		pass
 class Item:
 	name: str
 	id: int
@@ -20,10 +43,7 @@ class Item:
 	high_alch: int
 	limit: int
 	value: int #Still not sure what this is
-	high_price: int
-	high_time: int
-	low_price: int
-	low_time:int
+	pricing: ItemPricingInformation
 	def __init__(self, item_information, pricing=None):
 		self.examine = item_information['examine']
 		self.name= item_information['name']
@@ -42,10 +62,8 @@ class Item:
 		if 'limit' in item_information.keys():
 			self.limit = item_information['limit']
 		else: self.limit = None
-
-
 		if pricing is not None:
-			pass
+			self.pricing = pricing
 
 
 class ItemList(Iterable):
@@ -60,11 +78,11 @@ class ItemList(Iterable):
 			self.item_list.append(Item(item_info))
 		self.item_list.sort(key=lambda item: item.id)
 
-	def _find_id(self, identifier: int):
+	def find_id(self, identifier: int):
 		for item in self.item_list: 
 			if item.id == identifer: return item
 		return None
-	def _find_name(self, name:str):
+	def find_name(self, name:str):
 		for item in self.item_list:
 			if item.name == identifier: return item
 		return None

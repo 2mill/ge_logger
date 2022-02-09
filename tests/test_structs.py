@@ -1,7 +1,5 @@
 from ge import structs
 
-
-
 def test_valid_id():
 	item_list: object = structs.ItemList()
 	item = item_list.find(4151)
