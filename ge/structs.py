@@ -51,7 +51,7 @@ class Item:
 		self.id = item_information['id']
 		self.members = item_information['members']
 		self.value = item_information['value']
-		
+		self.raw_dict = item_information
 
 		# Some items do not have an alch information
 		if 'lowalch' in item_information.keys():
@@ -67,20 +67,18 @@ class Item:
 		self.pricing = None
 	def set_pricing(self, itempricinginformation:ItemPricingInformation):
 		self.pricing = itempricinginformation
+	def __copy__(self) -> Item:
+
+		## Write tests for this copy function.
+		return Item(self.raw_dict)
+
 class ItemList(Iterable):
 	def  __init__(self,exchange_map):
 		self.item_list: list = []
-		header = {
-			'User-agent': '2mill/osrs_exchange'
-		}
 		# exchange_map = req.get(endpoint, headers=header).json()
 		for item_info in exchange_map:
 			temp_item = Item(item_info)
 		self.item_list.sort(key=lambda item: item.id)
-
-				
-
-
 	def set_pricing_information(self, pricinginformation):
 		for item in self.item_list:
 			string_id = str(item.id)
@@ -89,8 +87,18 @@ class ItemList(Iterable):
 				item.set_pricing(pricing)
 			except KeyError:
 				continue;
+	def generate_list(self, item_pricing, timestep_id=None) -> list:
+		if timestep_id is not None:
+			return self._timestep_list_generation(item_pricing, timestep_id)
+
+		
 
 
+
+
+	def _timestep_list_generation(item_pricing, timeste_id) -> list:
+		"""timsteps are different, because they do not pass the id."""
+		raise NotImplementedError
 	def find_id(self, identifier: int):
 		for item in self.item_list: 
 			if item.id == identifer: return item
