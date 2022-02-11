@@ -1,6 +1,5 @@
 from typing import Iterable
 import requests as req
-import endpoints
 import json
 
 # Remove this function. Not readable, bland, stupid.
@@ -35,6 +34,7 @@ class ItemPricingInformationList:
 		for item in self.item_list:
 			if item.id == id: return item
 		return None
+
 class Item:
 	name: str
 	id: int
@@ -45,7 +45,7 @@ class Item:
 	limit: int
 	value: int #Still not sure what this is
 	pricing: ItemPricingInformation
-	def __init__(self, item_information)
+	def __init__(self, item_information):
 		self.examine = item_information['examine']
 		self.name= item_information['name']
 		self.id = item_information['id']
@@ -67,8 +67,7 @@ class Item:
 		self.pricing = None
 	def set_pricing(self, itempricinginformation:ItemPricingInformation):
 		self.pricing = itempricinginformation
-	def __copy__(self) -> Item:
-
+	def __copy__(self) -> object:
 		## Write tests for this copy function.
 		return Item(self.raw_dict)
 
@@ -78,42 +77,54 @@ class ItemList(Iterable):
 		# exchange_map = req.get(endpoint, headers=header).json()
 		for item_info in exchange_map:
 			temp_item = Item(item_info)
+			self.item_list.append(temp_item)
 		self.item_list.sort(key=lambda item: item.id)
-	def set_pricing_information(self, pricinginformation):
+	def generate_list(self, item_pricing) -> list:
+		new_list: list = []
 		for item in self.item_list:
-			string_id = str(item.id)
-			try:
-				pricing = pricinginformation[string_id]
-				item.set_pricing(pricing)
-			except KeyError:
-				continue;
-	def generate_list(self, item_pricing, timestep_id=None) -> list:
-		if timestep_id is not None:
-			return self._timestep_list_generation(item_pricing, timestep_id)
+			item_id_str: str = str(item.id)
+			pricing_information = item_pricing[item_id_str]
+			new_item: Item = item.__copy__()
+			new_item.set_pricing(pricing_information)
+			new_list.append(new_item)
+		return new_list
+	def generate_single_item(self, item_pricing) -> list:
+		for item_id_str in item_pricing:
+			item_id_int: int = int(item_id_str)
+			item = self.find(item_id_int)
+			if item is None: return []
+			item: Item = item.__copy__()
+			item.set_pricing(item_pricing)	
+			return [item]
+	def generate_timestamp_list(self, item_pricing, item_id: int):
+		item: Item = self.item_list.find(item_id)
+		new_list:list = []
+		for pricing in item_pricing:
+			temp_item = item.__copy__()
+			temp_item.set_pricing(pricing)
+			new_list.append(temp_item)
+		return new_list
 
 		
 
-
-
-
-	def _timestep_list_generation(item_pricing, timeste_id) -> list:
+	def _timestep_list_generation(self, item_pricing, timeste_id) -> list:
 		"""timsteps are different, because they do not pass the id."""
 		raise NotImplementedError
 	def find_id(self, identifier: int):
 		for item in self.item_list: 
-			if item.id == identifer: return item
+			if item.id == identifier: return item
 		return None
 	def find_name(self, name:str):
 		for item in self.item_list:
-			if item.name == identifier: return item
+			if item.name == name: return item
 		return None
 	def __iter__(self):
 		return ItemListIterator(self)
 
 
 	def find(self, identifier) -> Item:
-		if type(identifier) == str: return self._find_name(identifier)
-		if type(identifier) == int: return self._find_id(identifier)
+		if type(identifier) == str: return self.find_name(identifier)
+		if type(identifier) == int: return self.find_id(identifier)
 class ItemListIterator:
 	def __init__(self, item_list:ItemList):
 		self.item_list = item_list.item_list
