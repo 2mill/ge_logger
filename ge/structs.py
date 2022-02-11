@@ -23,18 +23,6 @@ class ItemPricingInformation:
 			self.highTime = data['highTime']
 			self.low = data['low']
 			self.lowTime = data['lowTime']
-
-class ItemPricingInformationList:
-	def __init__(self, item_pricing_list):
-		self.item_list = []
-		for item in item_pricing_list:
-			self.item_list.append(ItemPricingInformation(int(item),item_pricing_list[item]))
-		self.item_list.sort(key=lambda item: item.id)
-	def find_id(self, id:int):
-		for item in self.item_list:
-			if item.id == id: return item
-		return None
-
 class Item:
 	name: str
 	id: int
@@ -79,11 +67,16 @@ class ItemList(Iterable):
 			temp_item = Item(item_info)
 			self.item_list.append(temp_item)
 		self.item_list.sort(key=lambda item: item.id)
-	def generate_list(self, item_pricing) -> list:
+	def generate_list(self, item_pricing, skip=False) -> list:
 		new_list: list = []
 		for item in self.item_list:
 			item_id_str: str = str(item.id)
-			pricing_information = item_pricing[item_id_str]
+			pricing_information = None
+			try:
+				pricing_information = item_pricing[item_id_str]
+			except KeyError:
+				if skip:
+					continue
 			new_item: Item = item.__copy__()
 			new_item.set_pricing(pricing_information)
 			new_list.append(new_item)
@@ -97,7 +90,7 @@ class ItemList(Iterable):
 			item.set_pricing(item_pricing)	
 			return [item]
 	def generate_timestamp_list(self, item_pricing, item_id: int):
-		item: Item = self.item_list.find(item_id)
+		item: Item = self.find(item_id)
 		new_list:list = []
 		for pricing in item_pricing:
 			temp_item = item.__copy__()

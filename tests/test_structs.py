@@ -24,9 +24,37 @@ def test_generate_list():
 	item_list = structs.ItemList(mapping_data)
 	items = item_list.generate_list(lookup_all_data['data'])
 	assert type(items) == list and len(items) == total_items
-# def test_generate_timestamp_list():
-# 	item_timestepped = item_list.generate_timestamp_list(timestamp_item, 4151)
-# 	assert item_timestepped == list
+def test_generate_list_skip():
+	item_list = structs.ItemList(mapping_data)
+	items = item_list.generate_list(lookup_all_data['data'], skip=True)
+	assert type(items) == list and len(items) < total_items
+def test_item_not_reference():
+	item_list = structs.ItemList(mapping_data)
+	first_item = item_list.generate_single_item(abyssal_whip_lookup['data'])
+	second_item = item_list.generate_single_item(abyssal_whip_lookup['data'])
+	assert first_item.pop() != second_item.pop()
+def test_generate_timestamp_list():
+	item_list = structs.ItemList(mapping_data)
+	item_timestepped = item_list.generate_timestamp_list(timestamp_item['data'], 4151)
+	assert type(item_timestepped) == list
+def test_list_sorted():
+	item_list = structs.ItemList(mapping_data)
+	assert sorted(item_list, key=lambda item: item.id)
+
+MOCK_ITEM_INFORMATION = {
+	"examine": "Pudding",
+	"id": 4151,
+	"name": "abyssal whip",
+	"value": 51515,
+	"limit": 8000,
+	"members": False,
+	"lowalch": 1,
+	"highalch": 2,
+}
+def test_item():
+	item = structs.Item(MOCK_ITEM_INFORMATION)
+	assert item.id == MOCK_ITEM_INFORMATION["id"]
+
 
 
 
