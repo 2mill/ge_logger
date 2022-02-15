@@ -1,12 +1,8 @@
-Trials and tribulations:
-OSRSBOX is being deprecated, because the author does not want to keep maintaining the tool.
-This means that the code needs to be changed and altered to accomidate whatever comes next.
-More planning will be done soon.
-# WikiGe
-Hello, please do not use this, because it is not working.
-##Purpose
-An API wrapper for the OSRS Wiki GE Tracker API in Python.
+#osrs_exchange v0.6 (BETA)
+osrs_exchange is a python wrapper for [Oldschool Runescape Wiki Grand Exchange Data API](https://prices.runescape.wiki/osrs/). Learn more about the project [here](https://oldschool.runescape.wiki/w/RuneScape:Real-time_Prices)
 
-
-## Progress
-[Read branch progress here](https://x2m.notion.site/pyGE-6260ce8f2afc44e4980fb4e82009ff60)
+##Usage
+I still need to work on proper interface imports and more testing needs to be done so use at your own risk.
+`import ge.wikige` will import the correct package.
+Afterwards, initialize the ge with `ge.wikige.WikiGe()`.
+Further documentation will be provided soon.
