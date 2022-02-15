@@ -1,29 +1,32 @@
 import requests
-from ge.structs import ItemList, PricedItem
-from ge import utils
-from ge import endpoints
+from ge import endpoints, structs
+from ge.endpoints import Timestep
+# from ge import endpoints
+# from ge.endpoints import Timestep
 
 
 class WikiGe():
 	def __init__(self):
-		self.item_list = ItemList()
-	def lookup(self, identifier) -> PricedItem:
-		# return utils.lookup(identifier)
+		mapping_data = endpoints.get_mapping().json()
+		self.item_list = structs.ItemList(mapping_data)
+	def lookup(self, identifier) -> list:
 		if type(identifier) is not int and type(identifier) is not str:
 			raise ValueError("Lookup only accepts ints or strings")
-		return utils.lookup(identifier, self.item_list)
-	def lookup_all(self) -> PricedItem:
-		utils.lookup_all(self.item_list)
-
-
-def get(key: str, timeseries: str, config_filepath) -> dict:
-	items = tools.item_list("./item_data.json")
-	item = tools.find_item(items, key)
-	if item == []: return {}
-	return tools.reformat(
-		requests.get(
-			tools.id_link(item[0]), 
-			headers=tools.header(config_filepath)
-		).json()['data'],
-		item
-	)
+		if type(identifier) is str:
+			item = self.item_list.find_name(identifier)		
+			identifier = item.id
+		item_pricing_data = endpoints.get_latest(identifier).json()['data']
+		return self.item_list.generate_single_item(item_pricing_data)
+	def lookup_all(self, skip=False) -> list:
+		all_pricing_data = endpoints.get_latest_all().json()['data']
+		return self.item_list.generate_list(all_pricing_data, skip)
+	
+	def timeseries(self, identifier, timestep: Timestep):
+		if type(identifier) is not int and type(identifier) is not str:
+			raise ValueError("Identifier must be string or int")
+		if type(identifier) is str:
+			# Does not account for none yet.
+			item = self.item_list.find(identifier)
+			identifier = item.id
+		timeseries_data = endpoints.get_timestep(timestep, identifier).json()['data']
+		return self.item_list.generate_timestamp_list(timeseries_data, identifier)

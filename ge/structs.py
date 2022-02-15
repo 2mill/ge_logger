@@ -18,11 +18,11 @@ class ItemPricingInformation:
 	low: int
 	lowTime: int
 	def __init__(self, pricing_information):
-		if data != "{}":
-			self.high = data['high']
-			self.highTime = data['highTime']
-			self.low = data['low']
-			self.lowTime = data['lowTime']
+		if  pricing_information != "{}":
+			self.high = pricing_information['high']
+			self.highTime = pricing_information['highTime']
+			self.low = pricing_information['low']
+			self.lowTime = pricing_information['lowTime']
 class Item:
 	name: str
 	id: int
@@ -54,7 +54,7 @@ class Item:
 		else: self.limit = None
 		self.pricing = None
 	def set_pricing(self, itempricinginformation:ItemPricingInformation):
-		self.pricing = itempricinginformation
+		self.pricing = ItemPricingInformation(itempricinginformation[str(self.id)])
 	def __copy__(self) -> object:
 		## Write tests for this copy function.
 		return Item(self.raw_dict)
