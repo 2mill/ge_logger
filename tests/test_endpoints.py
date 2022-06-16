@@ -1,4 +1,4 @@
-import ge.endpoints as endpoints
+from wikige import endpoints
 
 # def test_timeseries():
 # 	timestep = endpoints.Timestep.FIVE_MIN.value

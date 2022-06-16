@@ -1,7 +1,6 @@
 from enum import Enum
 import requests as req
 
-
 HEADER = {
 	'User-agent': 'github.com/2mill/osrs_exchange'
 }
@@ -10,6 +9,8 @@ class Timestep(Enum):
 	FIVE_MIN="5m"
 	ONE_HOUR="1h"
 	SIX_HOURS="6h"
+
+
 def get_latest(id:int) -> object:
 	endpoint = f"{BASE_URL}/latest?id={id}"
 	return req.get(endpoint, headers=HEADER)

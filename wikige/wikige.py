@@ -1,8 +1,5 @@
-import requests
-from ge import endpoints, structs
-from ge.endpoints import Timestep
-# from ge import endpoints
-# from ge.endpoints import Timestep
+from wikige import endpoints, structs
+from wikige.endpoints import Timestep
 
 
 class WikiGe():

@@ -1,4 +1,4 @@
-import ge.structs as structs
+from wikige import structs
 import json
 
 

@@ -1,28 +1,16 @@
 from typing import Iterable
-import requests as req
-import json
-
-# Remove this function. Not readable, bland, stupid.
-give_it_back: str = lambda output, addition: f"{output}{addition}\n"
-class Pricing:
-	def __init__(self, pricing_data):
-		self.high_price = pricing_data['high']['price']
-		self.high_time = pricing_data['high']['time']
-		self.low_price = pricing_data['low']['price']
-		self.low_time = pricing_data['low']['time']
-
 class ItemPricingInformation:
 	id: int
 	high:int
-	highTime: int
+	high_time: int
 	low: int
-	lowTime: int
+	low_time: int
 	def __init__(self, pricing_information):
 		if  pricing_information != "{}":
 			self.high = pricing_information['high']
-			self.highTime = pricing_information['highTime']
+			self.high_time = pricing_information['highTime']
 			self.low = pricing_information['low']
-			self.lowTime = pricing_information['lowTime']
+			self.low_time = pricing_information['lowTime']
 class Item:
 	name: str
 	id: int
@@ -54,7 +42,7 @@ class Item:
 		else: self.limit = None
 		self.pricing = None
 	def set_pricing(self, itempricinginformation:ItemPricingInformation):
-		self.pricing = ItemPricingInformation(itempricinginformation[str(self.id)])
+		self.pricing = ItemPricingInformation(itempricinginformation)
 	def __copy__(self) -> object:
 		## Write tests for this copy function.
 		return Item(self.raw_dict)
@@ -97,12 +85,6 @@ class ItemList(Iterable):
 			temp_item.set_pricing(pricing)
 			new_list.append(temp_item)
 		return new_list
-
-		
-
-	def _timestep_list_generation(self, item_pricing, timeste_id) -> list:
-		"""timsteps are different, because they do not pass the id."""
-		raise NotImplementedError
 	def find_id(self, identifier: int):
 		for item in self.item_list: 
 			if item.id == identifier: return item
