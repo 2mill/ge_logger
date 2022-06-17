@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+import ge.endpoints as endpoints
+=======
 from wikige import endpoints
 
 # def test_timeseries():
@@ -14,7 +17,10 @@ def test_timestep_enum():
 	assert ['5m', '1h', '6h'] == steps
 def test_timestep():
 	assert endpoints.get_timestep(endpoints.Timestep.FIVE_MIN, 4151).status_code == 200
+>>>>>>> main
 	
 	
+def test_mapping():
+	data = endpoints.mapping().json()
 
 

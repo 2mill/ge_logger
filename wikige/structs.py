@@ -1,16 +1,59 @@
 from typing import Iterable
+<<<<<<< HEAD:ge/structs.py
+from ge import endpoints
+import json
+
+# Remove this function. Not readable, bland, stupid.
+give_it_back: str = lambda output, addition: f"{output}{addition}\n"
+class Pricing:
+	def __init__(self, pricing_data):
+		self.high_price = pricing_data['high']['price']
+		self.high_time = pricing_data['high']['time']
+		self.low_price = pricing_data['low']['price']
+		self.low_time = pricing_data['low']['time']
+
+=======
+>>>>>>> main:wikige/structs.py
 class ItemPricingInformation:
 	id: int
 	high:int
 	high_time: int
 	low: int
+<<<<<<< HEAD:ge/structs.py
+	lowTime: int
+	def __init__(self, identifier:int, pricing_information: json.JSONDecodeError):
+		self.id = identifier
+=======
 	low_time: int
 	def __init__(self, pricing_information):
+>>>>>>> main:wikige/structs.py
 		if  pricing_information != "{}":
 			self.high = pricing_information['high']
 			self.high_time = pricing_information['highTime']
 			self.low = pricing_information['low']
+<<<<<<< HEAD:ge/structs.py
+			self.lowTime = pricing_information['lowTime']
+
+class TimedItemPricingInformation:
+	avg_high_price: int
+	avg_low_price: int
+	high_volume:int
+	low_volume: int
+	id: int
+	timestamp: int
+	def __init__(self, identity, pricing_information, timestamp: int):
+		self.id = identity
+		self.avg_high_price = pricing_information['avgHighPrice']	
+		self.avg_low_price = pricing_information['avgLowPrice']	
+
+		self.high_volume= pricing_information['highPriceVolume']	
+		self.low_volume= pricing_information['lowPriceVolume']	
+
+		self.timestamp = timestamp
+
+=======
 			self.low_time = pricing_information['lowTime']
+>>>>>>> main:wikige/structs.py
 class Item:
 	name: str
 	id: int
@@ -21,43 +64,41 @@ class Item:
 	limit: int
 	value: int #Still not sure what this is
 	pricing: ItemPricingInformation
-	def __init__(self, item_information):
+	def __init__(self, item_information: json.JSONDecoder):
 		self.examine = item_information['examine']
-		self.name= item_information['name']
 		self.id = item_information['id']
+		self.name= item_information['name']
 		self.members = item_information['members']
 		self.value = item_information['value']
-		self.raw_dict = item_information
-
 		# Some items do not have an alch information
 		if 'lowalch' in item_information.keys():
 			self.low_alch = item_information['lowalch']
 			self.high_alch = item_information['highalch']
 		else:
-			self.low_alch = None
-			self.high_alch = None
+			self.low_alch, self.high_alch = [None, None]
 		# Some items don't have limit information
 		if 'limit' in item_information.keys():
 			self.limit = item_information['limit']
 		else: self.limit = None
+<<<<<<< HEAD:ge/structs.py
+=======
 		self.pricing = None
 	def set_pricing(self, itempricinginformation:ItemPricingInformation):
 		self.pricing = ItemPricingInformation(itempricinginformation)
 	def __copy__(self) -> object:
 		## Write tests for this copy function.
 		return Item(self.raw_dict)
+>>>>>>> main:wikige/structs.py
 
 class ItemList(Iterable):
-	def  __init__(self,exchange_map):
-		self.item_list: list = []
-		# exchange_map = req.get(endpoint, headers=header).json()
-		for item_info in exchange_map:
-			temp_item = Item(item_info)
-			self.item_list.append(temp_item)
-		self.item_list.sort(key=lambda item: item.id)
-	def generate_list(self, item_pricing, skip=False) -> list:
-		new_list: list = []
+	def  __init__(self, exchange_map:list):
+		self.item_list: list[Item]= [Item(item_information) for item_information in exchange_map]
+	def find(self, identifier:int) -> Item:
+		"""Finds the item in the list, or returns None if it does not exist"""
+		if type(identifier) != int: return ValueError
 		for item in self.item_list:
+<<<<<<< HEAD:ge/structs.py
+=======
 			item_id_str: str = str(item.id)
 			pricing_information = None
 			try:
@@ -87,27 +128,8 @@ class ItemList(Iterable):
 		return new_list
 	def find_id(self, identifier: int):
 		for item in self.item_list: 
+>>>>>>> main:wikige/structs.py
 			if item.id == identifier: return item
 		return None
-	def find_name(self, name:str):
-		for item in self.item_list:
-			if item.name == name: return item
-		return None
-	def __iter__(self):
-		return ItemListIterator(self)
-
-
-	def find(self, identifier) -> Item:
-		if type(identifier) == str: return self.find_name(identifier)
-		if type(identifier) == int: return self.find_id(identifier)
-class ItemListIterator:
-	def __init__(self, item_list:ItemList):
-		self.item_list = item_list.item_list
-		self.index = -1
-	def __next__(self):
-		self.index = self.index + 1
-		actual_index = self.index + 1
-		if actual_index == len(self.item_list):
-			raise StopIteration
-		else:
-			return self.item_list[self.index]
+	def __iter__(self) -> Iterable:
+		return self.item_list.__iter__()
