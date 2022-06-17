@@ -13,8 +13,9 @@ def make_req(endpoint_url: str) -> req.Response:
 	header = {
 		'User-agent': 'github.com/2mill/osrs_exchange'
 	}
-	return req.get(endpoint_url, header)
+	return req.get(endpoint_url, headers=header)
 
+latest = lambda id: make_req(f"{base_url}/latest?id={id}")
 latest_all = lambda: make_req(f"{base_url}/latest?")
 mapping = lambda: make_req(f"{base_url}/mapping?")
 timestamp = lambda time: make_req(f"{base_url}/{time.value}")

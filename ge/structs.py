@@ -1,9 +1,12 @@
 from typing import Iterable
-import requests as req
+from ge import endpoints
 import json
 
 # Remove this function. Not readable, bland, stupid.
 give_it_back: str = lambda output, addition: f"{output}{addition}\n"
+# TODO: Pricing data needs to be broken into two objects.
+# The first object is just the pricing information.
+# The second object should be able to handle avg pricing data from timesteps and timestamps
 class Pricing:
 	def __init__(self, pricing_data):
 		self.high_price = pricing_data['high']['price']
@@ -33,99 +36,43 @@ class Item:
 	limit: int
 	value: int #Still not sure what this is
 	pricing: ItemPricingInformation
-	def __init__(self, item_information):
+	def __init__(self, item_information: json.JSONDecoder, item_pricing=None):
 		self.examine = item_information['examine']
-		self.name= item_information['name']
 		self.id = item_information['id']
+		self.name= item_information['name']
 		self.members = item_information['members']
 		self.value = item_information['value']
-		self.raw_dict = item_information
-
 		# Some items do not have an alch information
 		if 'lowalch' in item_information.keys():
 			self.low_alch = item_information['lowalch']
 			self.high_alch = item_information['highalch']
 		else:
-			self.low_alch = None
-			self.high_alch = None
+			self.low_alch, self.high_alch = None
 		# Some items don't have limit information
 		if 'limit' in item_information.keys():
 			self.limit = item_information['limit']
 		else: self.limit = None
-		self.pricing = None
-	def set_pricing(self, itempricinginformation:ItemPricingInformation):
-		self.pricing = ItemPricingInformation(itempricinginformation[str(self.id)])
-	def __copy__(self) -> object:
-		## Write tests for this copy function.
-		return Item(self.raw_dict)
+		self.id = item_information['id']
+		self.pricing = ItemPricingInformation(item_pricing[str(self.id)])
 
 class ItemList(Iterable):
-	def  __init__(self,exchange_map):
+	def  __init__(self):
 		self.item_list: list = []
-		# exchange_map = req.get(endpoint, headers=header).json()
-		for item_info in exchange_map:
-			temp_item = Item(item_info)
-			self.item_list.append(temp_item)
-		self.item_list.sort(key=lambda item: item.id)
-	def generate_list(self, item_pricing, skip=False) -> list:
-		new_list: list = []
-		for item in self.item_list:
-			item_id_str: str = str(item.id)
-			pricing_information = None
-			try:
-				pricing_information = item_pricing[item_id_str]
-			except KeyError:
-				if skip:
-					continue
-			new_item: Item = item.__copy__()
-			new_item.set_pricing(pricing_information)
-			new_list.append(new_item)
-		return new_list
-	def generate_single_item(self, item_pricing) -> list:
-		for item_id_str in item_pricing:
-			item_id_int: int = int(item_id_str)
-			item = self.find(item_id_int)
-			if item is None: return []
-			item: Item = item.__copy__()
-			item.set_pricing(item_pricing)	
-			return [item]
-	def generate_timestamp_list(self, item_pricing, item_id: int):
-		item: Item = self.find(item_id)
-		new_list:list = []
-		for pricing in item_pricing:
-			temp_item = item.__copy__()
-			temp_item.set_pricing(pricing)
-			new_list.append(temp_item)
-		return new_list
-
-		
-
-	def _timestep_list_generation(self, item_pricing, timeste_id) -> list:
-		"""timsteps are different, because they do not pass the id."""
-		raise NotImplementedError
-	def find_id(self, identifier: int):
-		for item in self.item_list: 
-			if item.id == identifier: return item
-		return None
-	def find_name(self, name:str):
-		for item in self.item_list:
-			if item.name == name: return item
-		return None
-	def __iter__(self):
-		return ItemListIterator(self)
-
-
-	def find(self, identifier) -> Item:
-		if type(identifier) == str: return self.find_name(identifier)
-		if type(identifier) == int: return self.find_id(identifier)
-class ItemListIterator:
-	def __init__(self, item_list:ItemList):
-		self.item_list = item_list.item_list
-		self.index = -1
-	def __next__(self):
-		self.index = self.index + 1
-		actual_index = self.index + 1
-		if actual_index == len(self.item_list):
-			raise StopIteration
-		else:
-			return self.item_list[self.index]
+		self.exchange_map = endpoints.mapping().json()
+	def find(self, identifier:int) -> Item:
+		"""Finds the item in the list, or returns None if it does not exist"""
+		if type(identifier) != int: return ValueError
+		item_information = list(
+			filter(
+				lambda data: data['id'] == identifier,
+				self.exchange_map
+		))
+		if len(item_information) == 0:
+			return None
+		item_pricing = endpoints.latest(identifier).json()['data']
+		return Item(item_information.pop(), item_pricing)
+	def find_everything(self) -> list:
+		item_pricing_information = endpoints.latest()['data']
+		return [Item(item_information, item_pricing_information[item_information['id']]) for item_information in self.exchange_map]
+	def __iter__(self) -> Iterable:
+		self.everything().__iter__()

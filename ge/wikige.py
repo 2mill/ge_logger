@@ -6,10 +6,8 @@ from ge.endpoints import Timestep
 
 
 class WikiGe():
-	def __init__(self):
-		mapping_data = endpoints.get_mapping().json()
-		self.item_list = structs.ItemList(mapping_data)
-	def lookup(self, identifier) -> list:
+	
+	def lookup(self, identifier:int) -> list:
 		if type(identifier) is not int and type(identifier) is not str:
 			raise ValueError("Lookup only accepts ints or strings")
 		if type(identifier) is str:
@@ -17,6 +15,15 @@ class WikiGe():
 			identifier = item.id
 		item_pricing_data = endpoints.get_latest(identifier).json()['data']
 		return self.item_list.generate_single_item(item_pricing_data)
+	def new_lookup(self, identifier:int) -> list:
+		if not type(identifier) == int:
+			try:
+				identifier = int(identifier)
+			except ValueError:
+				return ValueError
+		lookup = endpoints.latest(identifier).json()['data']
+		return structs.Item(lookup)
+
 	def lookup_all(self, skip=False) -> list:
 		all_pricing_data = endpoints.get_latest_all().json()['data']
 		return self.item_list.generate_list(all_pricing_data, skip)
