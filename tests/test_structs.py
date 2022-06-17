@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 from os import times_result
 from numpy import identity
 import ge.structs as structs
+=======
+from wikige import structs
+>>>>>>> main
 import json
 
 

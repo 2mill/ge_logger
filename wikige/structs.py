@@ -1,4 +1,5 @@
 from typing import Iterable
+<<<<<<< HEAD:ge/structs.py
 from ge import endpoints
 import json
 
@@ -11,18 +12,26 @@ class Pricing:
 		self.low_price = pricing_data['low']['price']
 		self.low_time = pricing_data['low']['time']
 
+=======
+>>>>>>> main:wikige/structs.py
 class ItemPricingInformation:
 	id: int
 	high:int
-	highTime: int
+	high_time: int
 	low: int
+<<<<<<< HEAD:ge/structs.py
 	lowTime: int
 	def __init__(self, identifier:int, pricing_information: json.JSONDecodeError):
 		self.id = identifier
+=======
+	low_time: int
+	def __init__(self, pricing_information):
+>>>>>>> main:wikige/structs.py
 		if  pricing_information != "{}":
 			self.high = pricing_information['high']
-			self.highTime = pricing_information['highTime']
+			self.high_time = pricing_information['highTime']
 			self.low = pricing_information['low']
+<<<<<<< HEAD:ge/structs.py
 			self.lowTime = pricing_information['lowTime']
 
 class TimedItemPricingInformation:
@@ -42,6 +51,9 @@ class TimedItemPricingInformation:
 
 		self.timestamp = timestamp
 
+=======
+			self.low_time = pricing_information['lowTime']
+>>>>>>> main:wikige/structs.py
 class Item:
 	name: str
 	id: int
@@ -68,6 +80,15 @@ class Item:
 		if 'limit' in item_information.keys():
 			self.limit = item_information['limit']
 		else: self.limit = None
+<<<<<<< HEAD:ge/structs.py
+=======
+		self.pricing = None
+	def set_pricing(self, itempricinginformation:ItemPricingInformation):
+		self.pricing = ItemPricingInformation(itempricinginformation)
+	def __copy__(self) -> object:
+		## Write tests for this copy function.
+		return Item(self.raw_dict)
+>>>>>>> main:wikige/structs.py
 
 class ItemList(Iterable):
 	def  __init__(self, exchange_map:list):
@@ -76,6 +97,38 @@ class ItemList(Iterable):
 		"""Finds the item in the list, or returns None if it does not exist"""
 		if type(identifier) != int: return ValueError
 		for item in self.item_list:
+<<<<<<< HEAD:ge/structs.py
+=======
+			item_id_str: str = str(item.id)
+			pricing_information = None
+			try:
+				pricing_information = item_pricing[item_id_str]
+			except KeyError:
+				if skip:
+					continue
+			new_item: Item = item.__copy__()
+			new_item.set_pricing(pricing_information)
+			new_list.append(new_item)
+		return new_list
+	def generate_single_item(self, item_pricing) -> list:
+		for item_id_str in item_pricing:
+			item_id_int: int = int(item_id_str)
+			item = self.find(item_id_int)
+			if item is None: return []
+			item: Item = item.__copy__()
+			item.set_pricing(item_pricing)	
+			return [item]
+	def generate_timestamp_list(self, item_pricing, item_id: int):
+		item: Item = self.find(item_id)
+		new_list:list = []
+		for pricing in item_pricing:
+			temp_item = item.__copy__()
+			temp_item.set_pricing(pricing)
+			new_list.append(temp_item)
+		return new_list
+	def find_id(self, identifier: int):
+		for item in self.item_list: 
+>>>>>>> main:wikige/structs.py
 			if item.id == identifier: return item
 		return None
 	def __iter__(self) -> Iterable:

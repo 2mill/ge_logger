@@ -1,9 +1,14 @@
+<<<<<<< HEAD:ge/wikige.py
 from json import JSONDecoder
 import requests
 from ge import endpoints, structs
 from ge.endpoints import Timestep
 # from ge import endpoints
 # from ge.endpoints import Timestep
+=======
+from wikige import endpoints, structs
+from wikige.endpoints import Timestep
+>>>>>>> main:wikige/wikige.py
 
 def lookup_all() -> list:
 	item_pricing_information = endpoints.latest_all().json()['data']
