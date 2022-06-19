@@ -1,17 +1,8 @@
-from os import times_result
-from numpy import identity
-import ge.structs as structs
-from wikige import structs
+from ge import structs
 import json
 
 
 # Not trying to accidentally DDOS the wiki here.
-mapping_data = json.load(open("./tests/files_for_testing/mapping.json", "r"))
-
-total_items = 0
-for item in mapping_data:
-    total_items = total_items + 1
-
 lookup_all_data = json.load(open("./tests/files_for_testing/latest.json", "r"))
 abyssal_whip_lookup = json.load(
     open("./tests/files_for_testing/latest_aby_whip.json", "r")

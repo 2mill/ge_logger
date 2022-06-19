@@ -1,4 +1,5 @@
 from enum import Enum
+from json import JSONDecoder
 import requests as req
 
 base_url: str = "https://prices.runescape.wiki/api/v1/osrs"
@@ -33,21 +34,31 @@ timeseries = lambda id, timestep: make_req(
 )
 
 
-def get_latest(id: int) -> object:
-    endpoint = f"{BASE_URL}/latest?id={id}"
-    return req.get(endpoint, headers=HEADER)
+def format_data(data: dict) -> dict:
+    try:
+        if "timestamp" in list(data.keys()):
+            data["data"]["timestamp"] = data["timestamp"]
+        return data["data"]
+    except KeyError:
+        # At this point it's mapping data.
+        return data
 
 
-def get_all_latest() -> object:
-    endpoint = f"{BASE_URL}/latest"
-    return req.get(endpoint, headers=HEADER)
+def mapping_data() -> dict:
+    return format_data(mapping().json())
 
 
-def get_mapping() -> object:
-    endpoint = f"{BASE_URL}/mapping"
-    return req.get(endpoint, headers=HEADER)
+def latest_data(identity: int) -> dict:
+    return format_data(latest(identity).json())
 
 
-def get_timestep(timestep: Timestep, id: int) -> object:
-    endpoint = f"{BASE_URL}/timeseries?timestep={timestep.value}&id={id}"
-    return req.get(endpoint, headers=HEADER)
+def latest_all_data() -> dict:
+    return format_data(latest_all().json())
+
+
+def timestamp_data(time: Timestamp) -> dict:
+    return format_data(timestamp(time).json())
+
+
+def timeseries(identity: int, timestep: Timestep) -> dict:
+    return format_data(timeseries(identity, timestep).json())

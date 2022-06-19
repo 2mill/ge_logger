@@ -10,7 +10,7 @@ from wikige.endpoints import Timestep
 
 
 def lookup_all() -> list:
-    item_pricing_information = endpoints.latest_all().json()["data"]
+    item_pricing_information = endpoints.latest_all_data()
     return [
         structs.ItemPricingInformation(
             int(identity), item_pricing_information[identity]
@@ -22,7 +22,7 @@ def lookup_all() -> list:
 def lookup_id(identity: int) -> structs.ItemPricingInformation:
     if type(identity) != int:
         return ValueError
-    item_pricing_information = endpoints.latest(identity).json()["data"]
+    item_pricing_information = endpoints.latest(identity)
     if item_pricing_information == "{}":
         return None
 
@@ -32,14 +32,14 @@ def lookup_id(identity: int) -> structs.ItemPricingInformation:
 
 
 def mapping() -> structs.ItemList:
-    exchange_map = endpoints.mapping().json()
+    exchange_map = endpoints.mapping()
     return structs.ItemList(exchange_map)
 
 
 def timestamp(
     timestamp: endpoints.Timestamp,
 ) -> list[structs.TimedItemPricingInformation]:
-    item_pricing_information_and_timestamp: JSONDecoder = endpoints.timestamp(
+    item_pricing_information_and_timestamp: dict = endpoints.timestamp_data(
         timestamp
     ).json()
     timestamp = item_pricing_information["timestamp"]
@@ -53,6 +53,13 @@ def timestamp(
         )
         for identity in item_pricing_data
     ]
+
+
+# This part needs to be rewritten.
+# return structs.TimedItemPricingInformation(
+# 	int(identity),
+# 	item_pricing_dattimestampa
+# )
 
 
 def timeseries(
