@@ -34,14 +34,15 @@ timeseries = lambda id, timestep: make_req(
 )
 
 
-def format_data(data: dict) -> dict:
-    try:
-        if "timestamp" in list(data.keys()):
-            data["data"]["timestamp"] = data["timestamp"]
-        return data["data"]
-    except KeyError:
-        # At this point it's mapping data.
-        return data
+def format_data(data) -> dict:
+	if type(data) == dict:
+		if "timestamp" in data.keys():
+			return data
+		try:
+			return data["data"]
+		except KeyError:
+			return data
+	return data
 
 
 def mapping_data() -> dict:
@@ -56,7 +57,7 @@ def latest_all_data() -> dict:
     return format_data(latest_all().json())
 
 
-def timestamp_data(time: Timestamp) -> dict:
+def timestamp_data(identity: int, time: Timestamp) -> dict:
     return format_data(timestamp(time).json())
 
 

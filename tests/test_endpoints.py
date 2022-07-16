@@ -8,7 +8,7 @@ def test_mapping():
 def test_format_data():
     test_data = {"data": {"5": 55}}
     goal = {"5": 55}
-    second_test_Data = {"data": {"5": 55}, "timestamp": 5555}
-    second_goal = {"5": 55, "timestamp": 5555}
+    second_test_data = {"data": {"5": 55}, "timestamp": 5555}
+    second_goal = {"data": {"5": 55,}, "timestamp": 5555}
     assert endpoints.format_data(test_data) == goal
-    assert endpoints.format_data(second_test_Data) == second_goal
+    assert endpoints.format_data(second_test_data) == second_goal
