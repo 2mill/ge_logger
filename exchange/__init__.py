@@ -1,0 +1,1 @@
+from ge.wikige import *

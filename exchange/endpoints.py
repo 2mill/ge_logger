@@ -57,7 +57,7 @@ def latest_all_data() -> dict:
     return format_data(latest_all().json())
 
 
-def timestamp_data(identity: int, time: Timestamp) -> dict:
+def timestamp_data(time: Timestamp) -> dict:
     return format_data(timestamp(time).json())
 
 
