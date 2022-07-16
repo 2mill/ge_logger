@@ -1,7 +1,5 @@
 .DS_Store
 config.json
-ge_tracker.json
-item_data.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
