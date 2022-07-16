@@ -5,7 +5,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.json
-!tests/**/*.json #Except for these files.
+!tests/files_for_testing/*.json #Except for these files.
 
 
 meta.txt
