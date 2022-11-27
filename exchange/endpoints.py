@@ -25,6 +25,14 @@ def make_req(endpoint_url: str) -> req.Response:
     return req.get(endpoint_url, headers=header)
 
 
+def Endpoints(Enum):
+	LATEST = "/latest"
+	LATEST_ALL = "/latest"
+	MAPPING = "/mapping"
+	TIME="/"
+
+
+
 latest = lambda id: make_req(f"{base_url}/latest?id={id}")
 latest_all = lambda: make_req(f"{base_url}/latest?")
 mapping = lambda: make_req(f"{base_url}/mapping?")
