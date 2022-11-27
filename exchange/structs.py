@@ -18,19 +18,19 @@ class Client:
 			"{}/{}",
 			self.BASE_URL
 			endpoints.MAPPING,
-		)	
+		)
 
 		data: dict = None
-		if (res.ok) :
+		if (res.ok):
 			data: dict = res.json()
 
 		self.item_map = {}
 
 		for item in data:
-			
+
 			item: dict = item
 			item_id = str(item.get('id'))
-			self.item_map[item_id] = item 
+			self.item_map[item_id] = item
 
 	def latest(self, id=None) -> list['LatestItem']:
 		endpoint = "/latest"
@@ -43,7 +43,8 @@ class Client:
 
 			)
 		)
-		if not res.ok: []
+		if not res.ok:
+			[]
 		data: dict = res.json()['data']
 
 		returner = []
@@ -60,30 +61,33 @@ class Client:
 					item.get('lowTime')
 				)
 			)
+
 	def item(self, item_id: int) -> dict:
 		item = self.item_map.get(item_id)
-		if not item: return {}
+		# Here is where we would pull all the data
+		# And filter for the specified ID.
+
+		if not item:
+			return {}
 		return item
+
+
+	# since can be 5m, 1h, 6h and 24h
+	def timestamp(self, since: str) -> dict:
+		url: str = "{}/{}".format(
+			self.BASE_URL,
+			since
+		)
+
+		res = requests.get(url)
+
+		if res.ok: return res.json()
+		return {}
+
 	def items(self) -> dict:
 		return self.item_map
 
 # TODO Rebuild Item class and allow it as a parameter.
-
-		
-
-	
-
-
-
-
-
-
-
-			
-
-		
-
-
 
 
 class LatestValues:
@@ -92,12 +96,14 @@ class LatestValues:
 	low: int
 	high_time: int
 	low_time: int
+
 	def __init__(self, high: int, high_time: int, low: int, low_time: int) -> None:
-			self.high = high
-			self.low = low
-			self.high_time = high_time
-			self.low_time = low_time
-	
+		self.high = high
+		self.low = low
+		self.high_time = high_time
+		self.low_time = low_time
+
+
 class LatestItem:
 
 	id: int
@@ -122,8 +128,55 @@ class LatestItem:
 
 		self.high_time = high_time
 		self.low_time = low_time
-		  
 
+
+class TimestampedItem:
+	id: int
+	timestamp: int
+	avg_high_price: int
+	avg_low_price: int
+	high_price_volume: int
+	low_price_volume: int
+
+	def __init__(
+		self,
+		id: int,
+		avg_high_price: int,
+		avg_low_price: int,
+		high_price_volume: int,
+		low_price_volume: int,
+		timestamp: int
+		
+		) -> None:
+			self.id = id
+			self.avg_high_price = avg_high_price
+			self.avg_low_price = avg_low_price
+			self.high_price_volume = high_price_volume
+			self.low_price_volume = low_price_volume
+			self.timestamp = timestamp
+
+
+class MappingItem:
+	id: int
+	name: str
+	value: int
+	examine: str
+	members: bool
+	low_alch: int
+	limit: int
+	high_alch: int
+	icon: str
+
+	def __init__(self, id: int, name: str, value: int, members: bool, low_alch: int, high_alch: int, limit: int, examine: str, icon: str) -> None:
+		self.id = id
+		self.name = name
+		self.value = value
+		self.members = members
+		self.low_alch = low_alch
+		self.high_alch = high_alch
+		self.limit = limit
+		self.examine = examine
+		self.icon = icon
 
 
 class Pricing:
@@ -167,8 +220,6 @@ class TimedItemPricingInformation:
 		self.low_volume = pricing_information["lowPriceVolume"]
 
 		self.timestamp = timestamp
-
-
 
 
 class ItemList(Iterable):
