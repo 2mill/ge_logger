@@ -2,6 +2,11 @@ import requests
 from ge import endpoints, structs
 from ge.endpoints import Timestep, Timestamp
 
+lookup_filter = {
+	'identifier': int,
+	'name': str,
+}
+
 
 def lookup_all() -> list:
     item_pricing_information = endpoints.latest_all_data()
@@ -11,6 +16,9 @@ def lookup_all() -> list:
         )
         for identity in item_pricing_information
     ]
+
+def find_name(name: str) -> dict:
+	
 
 
 def lookup_id(identity: int) -> structs.ItemPricingInformation:
