@@ -32,8 +32,8 @@ class LatestItem:
 		self.low_time = low_time
 
 
-class TimestampedItem:
-	id: int
+# This might be a bad class name... shrug emoji here
+class ItemPriceInterval:
 	timestamp: int
 	avg_high_price: int
 	avg_low_price: int
@@ -42,23 +42,25 @@ class TimestampedItem:
 
 	def __init__(
 		self,
-		id: int,
+		timestamp: int,
 		avg_high_price: int,
 		avg_low_price: int,
 		high_price_volume: int,
 		low_price_volume: int,
-		timestamp: int
-		
-		) -> None:
-			self.id = id
+	) -> None:
+			self.timestamp = timestamp
 			self.avg_high_price = avg_high_price
 			self.avg_low_price = avg_low_price
 			self.high_price_volume = high_price_volume
 			self.low_price_volume = low_price_volume
-			self.timestamp = timestamp
 
+class TimedItem:
+	id: int
 
-class MappingItem:
+	def __init__(self, id: int,data_points: list[ItemPriceInterval]) -> None:
+		self.id = id
+	
+class MappedItem:
 	id: int
 	name: str
 	value: int
