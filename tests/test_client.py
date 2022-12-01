@@ -1,5 +1,5 @@
-import exchange
-client = exchange.Client()
+import pyWikiGE
+client = pyWikiGE.Client()
 
 def test_timeseries():
 	item_id = 4151

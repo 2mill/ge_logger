@@ -1,8 +1,8 @@
 import requests
 from enum import Enum
-from exchange.structs import LatestItem, MappedItem, TimedItem
-from exchange.structs import ItemPriceInterval
-from exchange.utils import EndpointBuilder
+from pyWikiGE.structs import LatestItem, MappedItem, TimedItem
+from pyWikiGE.structs import ItemPriceInterval
+from pyWikiGE.utils import EndpointBuilder
 HEADER = {"User-agent": "github.com/2mill/osrs_exchange"}
 
 class Game(Enum):
@@ -13,7 +13,7 @@ class Game(Enum):
 class Client:
 	item_map: dict
 
-	def __init__(self, endpoints=None, source=None, game=None) -> None:
+	def __init__(self) -> None:
 		res = EndpointBuilder(
 			'mapping',
 		).fetch()

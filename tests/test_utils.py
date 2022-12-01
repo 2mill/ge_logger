@@ -1,4 +1,4 @@
-from exchange import utils
+from pyWikiGE import utils
 
 current_url = r'https://prices.runescape.wiki/api/v1/osrs'
 
